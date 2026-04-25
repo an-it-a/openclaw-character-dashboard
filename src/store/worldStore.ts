@@ -16,22 +16,29 @@ export type InspectorSelection =
 // Store shape
 // ---------------------------------------------------------------------------
 
+export type LiveDataStatus = "connecting" | "ok" | "error";
+
 type WorldState = {
   worldConfig: WorldConfig | null;
   isMockMode: boolean;
+  liveDataStatus: LiveDataStatus;
   inspectorSelection: InspectorSelection;
 
   setWorldConfig: (config: WorldConfig) => void;
   setMockMode: (enabled: boolean) => void;
+  setLiveDataStatus: (status: LiveDataStatus) => void;
   setInspectorSelection: (selection: InspectorSelection) => void;
 };
 
 export const useWorldStore = create<WorldState>()((set) => ({
   worldConfig: null,
   isMockMode: false,
+  liveDataStatus: "connecting",
   inspectorSelection: null,
 
   setWorldConfig: (config) => set({ worldConfig: config }),
-  setMockMode: (enabled) => set({ isMockMode: enabled }),
+  setMockMode: (enabled) =>
+    set({ isMockMode: enabled, liveDataStatus: "connecting" }),
+  setLiveDataStatus: (status) => set({ liveDataStatus: status }),
   setInspectorSelection: (selection) => set({ inspectorSelection: selection }),
 }));

@@ -1,35 +1,56 @@
 import { useWorldStore } from "@/store/worldStore";
+import type { LiveDataStatus } from "@/store/worldStore";
 import { MockStateController } from "./MockStateController";
 
 import "./MockModeToggle.css";
 
+const STATUS_LABEL: Record<LiveDataStatus, string> = {
+  connecting: "connecting…",
+  ok: "connected",
+  error: "no data",
+};
+
 /**
  * MockModeToggle
  *
- * Toggle that switches between mock and live data sources.
- * The active Phaser scene owns the actual data source lifecycle.
+ * Segmented control that switches between mock and live data sources.
+ * When live mode is active, shows a status dot indicating connection health.
  */
 export function MockModeToggle(): JSX.Element {
   const isMockMode = useWorldStore((s) => s.isMockMode);
   const setMockMode = useWorldStore((s) => s.setMockMode);
+  const liveDataStatus = useWorldStore((s) => s.liveDataStatus);
 
   return (
     <>
-      <div className="mock-mode-toggle">
-        <label className="mock-mode-toggle__label">
-          <span className="mock-mode-toggle__text">
-            {isMockMode ? "Mock data" : "Live data"}
-          </span>
-          <span className="mock-mode-toggle__switch">
-            <input
-              type="checkbox"
-              checked={isMockMode}
-              onChange={(e) => setMockMode(e.target.checked)}
-              aria-label="Toggle mock mode"
-            />
-            <span className="mock-mode-toggle__slider" />
-          </span>
-        </label>
+      <div className="data-source-toggle">
+        <div
+          className="data-source-toggle__group"
+          role="group"
+          aria-label="Data source"
+        >
+          <button
+            className={`data-source-toggle__btn${isMockMode ? " data-source-toggle__btn--active" : ""}`}
+            onClick={() => setMockMode(true)}
+            aria-pressed={isMockMode}
+          >
+            Mock
+          </button>
+          <button
+            className={`data-source-toggle__btn${!isMockMode ? " data-source-toggle__btn--active" : ""}`}
+            onClick={() => setMockMode(false)}
+            aria-pressed={!isMockMode}
+          >
+            Live
+            {!isMockMode && (
+              <span
+                className={`data-source-toggle__status data-source-toggle__status--${liveDataStatus}`}
+                title={STATUS_LABEL[liveDataStatus]}
+                aria-label={`Live data status: ${STATUS_LABEL[liveDataStatus]}`}
+              />
+            )}
+          </button>
+        </div>
       </div>
       {isMockMode && <MockStateController />}
     </>

@@ -8,6 +8,7 @@ import { CollisionGrid, GRID_CELL } from "@/game/pathfinding/CollisionGrid";
 import { PathFinder } from "@/game/pathfinding/PathFinder";
 import { LiveDataSource } from "@/data/live";
 import { useWorldStore } from "@/store/worldStore";
+import type { LiveDataStatus } from "@/store/worldStore";
 import { useCharacterStore } from "@/store/characterStore";
 import { MockDataSource } from "@/data/mock";
 import type { DataSource } from "@/data/mock";
@@ -269,7 +270,9 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const live = new LiveDataSource(agentIds);
+    const live = new LiveDataSource(agentIds, (status: LiveDataStatus) => {
+      useWorldStore.getState().setLiveDataStatus(status);
+    });
     live.on("stateChange", handleStateChange);
     live.start();
     this.dataSource = live;

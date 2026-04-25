@@ -1,67 +1,80 @@
-.mock-mode-toggle {
+.data-source-toggle {
   flex-shrink: 0;
   background: #12122a;
   border-bottom: 1px solid #2a2a4a;
-  padding: 10px 20px;
+  padding: 8px 16px;
 }
 
-.mock-mode-toggle__label {
+.data-source-toggle__group {
+  display: inline-flex;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.data-source-toggle__btn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  padding: 4px 14px;
+  background: transparent;
+  border: none;
+  color: #55557a;
+  font-size: 11px;
+  font-family: monospace;
+  letter-spacing: 0.04em;
   cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
   user-select: none;
 }
 
-.mock-mode-toggle__text {
-  font-size: 12px;
-  color: #8888aa;
-  font-family: monospace;
+.data-source-toggle__btn:first-child {
+  border-right: 1px solid #2a2a4a;
 }
 
-/* Toggle switch */
-.mock-mode-toggle__switch {
-  position: relative;
+.data-source-toggle__btn:hover {
+  background: #1e1e3a;
+  color: #9999cc;
+}
+
+.data-source-toggle__btn--active {
+  background: #1e1e3a;
+  color: #ccccff;
+}
+
+/* Status dot */
+.data-source-toggle__status {
   display: inline-block;
-  width: 36px;
-  height: 20px;
-}
-
-.mock-mode-toggle__switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-}
-
-.mock-mode-toggle__slider {
-  position: absolute;
-  inset: 0;
-  background: #2a2a4a;
-  border-radius: 20px;
-  transition: background 0.2s;
-  cursor: pointer;
-}
-
-.mock-mode-toggle__slider::before {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  left: 3px;
-  top: 3px;
-  background: #888;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  transition:
-    transform 0.2s,
-    background 0.2s;
+  flex-shrink: 0;
 }
 
-.mock-mode-toggle__switch input:checked + .mock-mode-toggle__slider {
-  background: #3a3a8a;
+.data-source-toggle__status--connecting {
+  background: #888844;
+  box-shadow: 0 0 4px #888844;
+  animation: status-pulse 1.4s ease-in-out infinite;
 }
 
-.mock-mode-toggle__switch input:checked + .mock-mode-toggle__slider::before {
-  transform: translateX(16px);
-  background: #8888ff;
+.data-source-toggle__status--ok {
+  background: #44aa66;
+  box-shadow: 0 0 4px #44aa66;
+}
+
+.data-source-toggle__status--error {
+  background: #cc4444;
+  box-shadow: 0 0 4px #cc4444;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }

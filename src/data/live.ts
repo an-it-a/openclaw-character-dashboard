@@ -35,6 +35,8 @@ type SnapshotResponse = {
  * Polls the local snapshot API, derives each gateway agent's activity from
  * sessions.list output, and emits the dashboard's simplified main state.
  */
+export type LiveDataStatusCallback = (status: "ok" | "error") => void;
+
 export class LiveDataSource implements DataSource {
   private agentIds: string[];
   private handlers: StateChangeHandler[] = [];
@@ -42,9 +44,11 @@ export class LiveDataSource implements DataSource {
   private stopped = false;
   private inFlight = false;
   private previousStates = new Map<string, MainState>();
+  private onStatus: LiveDataStatusCallback | null = null;
 
-  constructor(agentIds: string[]) {
+  constructor(agentIds: string[], onStatus?: LiveDataStatusCallback) {
     this.agentIds = agentIds;
+    this.onStatus = onStatus ?? null;
   }
 
   start(): void {
@@ -86,9 +90,11 @@ export class LiveDataSource implements DataSource {
       }
 
       this.handleSnapshot(payload);
+      this.onStatus?.("ok");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn(`[LiveDataSource] ${message}`);
+      this.onStatus?.("error");
     } finally {
       this.inFlight = false;
       if (!this.stopped) {
