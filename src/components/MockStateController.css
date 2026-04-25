@@ -1,0 +1,83 @@
+.mock-state-controller {
+  padding: 10px 20px 14px;
+  border-bottom: 1px solid #2a2a4a;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mock-state-controller__title {
+  font-size: 11px;
+  font-family: monospace;
+  color: #5555aa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mock-state-controller__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mock-state-controller__label {
+  font-size: 11px;
+  font-family: monospace;
+  color: #6666aa;
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.mock-state-controller__select {
+  flex: 1;
+  background: #1a1a3a;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  color: #aaaacc;
+  font-size: 11px;
+  font-family: monospace;
+  padding: 3px 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.mock-state-controller__select:focus {
+  border-color: #6666cc;
+}
+
+.mock-state-controller__meta {
+  color: #7373af;
+  font-size: 10px;
+  font-family: monospace;
+  align-self: flex-end;
+}
+
+.mock-state-controller__apply {
+  align-self: flex-end;
+  background: #2a2a6a;
+  border: 1px solid #4444aa;
+  border-radius: 4px;
+  color: #9999ff;
+  font-size: 11px;
+  font-family: monospace;
+  padding: 4px 14px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.mock-state-controller__apply:hover:not(:disabled) {
+  background: #3a3a8a;
+  border-color: #6666cc;
+}
+
+.mock-state-controller__apply:active:not(:disabled) {
+  background: #1a1a5a;
+}
+
+.mock-state-controller__apply:disabled,
+.mock-state-controller__select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

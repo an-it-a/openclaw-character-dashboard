@@ -1,0 +1,51 @@
+{
+  "stand": {
+    "row": 0,
+    "frames": 3,
+    "frameRate": 1,
+    "repeat": -1,
+    "variants": ["inside", "outside"]
+  },
+  "walk-down": {
+    "row": 1,
+    "frames": 3,
+    "frameRate": 8,
+    "repeat": -1,
+    "variants": ["inside", "outside"]
+  },
+  "walk-up": {
+    "row": 2,
+    "frames": 3,
+    "frameRate": 8,
+    "repeat": -1,
+    "variants": ["inside", "outside"]
+  },
+  "walk-left": {
+    "row": 3,
+    "frames": 3,
+    "frameRate": 8,
+    "repeat": -1,
+    "variants": ["inside", "outside"]
+  },
+  "sit": {
+    "row": 4,
+    "frames": 2,
+    "frameRate": 1,
+    "repeat": -1,
+    "variants": ["inside", "outside"]
+  },
+  "sleep": {
+    "row": 5,
+    "frames": 2,
+    "frameRate": 1,
+    "repeat": -1,
+    "variants": ["inside"]
+  },
+  "work": {
+    "row": 5,
+    "frames": 2,
+    "frameRate": 2,
+    "repeat": -1,
+    "variants": ["outside"]
+  }
+}

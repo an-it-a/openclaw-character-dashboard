@@ -1,0 +1,995 @@
+{
+  "canvasWidth": 920,
+  "canvasHeight": 760,
+  "rooms": [
+    {
+      "id": "office",
+      "label": "Office",
+      "x": 0,
+      "y": 0,
+      "width": 896,
+      "height": 288,
+      "objects": [
+        {
+          "id": "office-floor",
+          "type": "floor",
+          "x": 0,
+          "y": 64,
+          "width": 896,
+          "height": 224,
+          "blocksPath": false,
+          "tiles": {
+            "left": "images/map/rooms/office/floor/left.png",
+            "center": "images/map/rooms/office/floor/center.png",
+            "right": "images/map/rooms/office/floor/right.png",
+            "bottomLeft": "images/map/rooms/office/floor/bottom-left.png",
+            "bottom": "images/map/rooms/office/floor/bottom.png",
+            "bottomRight": "images/map/rooms/office/floor/bottom-right.png",
+            "tileWidth": 32,
+            "tileHeight": 32
+          }
+        },
+        {
+          "id": "office-wall",
+          "type": "wall",
+          "x": 0,
+          "y": 0,
+          "width": 896,
+          "height": 64,
+          "blocksPath": true,
+          "tiles": {
+            "left": "images/map/rooms/office/wall/left.png",
+            "center": "images/map/rooms/office/wall/center.png",
+            "right": "images/map/rooms/office/wall/right.png",
+            "tileWidth": 32,
+            "tileHeight": 64
+          }
+        },
+        {
+          "id": "reception-lady",
+          "type": "object",
+          "asset": "images/map/characters/reception/bow.png",
+          "x": 198,
+          "y": 65,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true,
+          "animation": {
+            "frameWidth": 64,
+            "frameHeight": 64,
+            "frameCount": 2,
+            "frameRate": 1,
+            "repeat": -1
+          }
+        },
+        {
+          "id": "resource-wall",
+          "type": "object",
+          "asset": "images/map/objects/resource-wall.png",
+          "x": 64,
+          "y": 32,
+          "width": 160,
+          "height": 96,
+          "blocksPath": true
+        },
+        {
+          "id": "office-decor-1",
+          "type": "object",
+          "asset": "images/map/objects/office-decor-1.png",
+          "x": 0,
+          "y": 180,
+          "width": 144,
+          "height": 96,
+          "blocksPath": true
+        },
+        {
+          "id": "office-decor-2",
+          "type": "object",
+          "asset": "images/map/objects/office-decor-2.png",
+          "x": 768,
+          "y": 10,
+          "width": 144,
+          "height": 96,
+          "blocksPath": true
+        },
+        {
+          "id": "desk-1",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 288,
+          "y": 64,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-2",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 288,
+          "y": 160,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-3",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 480,
+          "y": 64,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-4",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 480,
+          "y": 160,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-5",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 672,
+          "y": 64,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-6",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 672,
+          "y": 160,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "living",
+      "label": "Living Room",
+      "x": 0,
+      "y": 288,
+      "width": 320,
+      "height": 448,
+      "objects": [
+        {
+          "id": "living-floor",
+          "type": "floor",
+          "x": 0,
+          "y": 352,
+          "width": 320,
+          "height": 384,
+          "blocksPath": false,
+          "tiles": {
+            "left": "images/map/rooms/living/floor/left.png",
+            "center": "images/map/rooms/living/floor/center.png",
+            "right": "images/map/rooms/living/floor/right.png",
+            "bottomLeft": "images/map/rooms/living/floor/bottom-left.png",
+            "bottom": "images/map/rooms/living/floor/bottom.png",
+            "bottomRight": "images/map/rooms/living/floor/bottom-right.png",
+            "tileWidth": 32,
+            "tileHeight": 32
+          }
+        },
+        {
+          "id": "living-wall",
+          "type": "wall",
+          "x": 0,
+          "y": 288,
+          "width": 320,
+          "height": 64,
+          "blocksPath": true,
+          "tiles": {
+            "left": "images/map/rooms/living/wall/left.png",
+            "center": "images/map/rooms/living/wall/center.png",
+            "right": "images/map/rooms/living/wall/right.png",
+            "tileWidth": 32,
+            "tileHeight": 64
+          }
+        },
+        {
+          "id": "living-door",
+          "type": "door",
+          "asset": "images/map/objects/living-door.png",
+          "x": 160,
+          "y": 288,
+          "width": 64,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "living-decor-2",
+          "type": "object",
+          "asset": "images/map/objects/living-decor-2.png",
+          "x": 30,
+          "y": 296,
+          "width": 96,
+          "height": 96,
+          "blocksPath": true
+        },
+        {
+          "id": "living-decor-1",
+          "type": "object",
+          "asset": "images/map/objects/living-decor-1.png",
+          "x": 115,
+          "y": 660,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "himmel-statue",
+          "type": "object",
+          "asset": "images/map/objects/himmel-statue.png",
+          "x": 240,
+          "y": 295,
+          "width": 64,
+          "height": 114,
+          "blocksPath": true
+        },
+        {
+          "id": "carpet",
+          "type": "floor-decor",
+          "asset": "images/map/objects/carpet.png",
+          "x": 32,
+          "y": 416,
+          "width": 224,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "sofa",
+          "type": "furniture",
+          "asset": "images/map/objects/sofa.png",
+          "x": 32,
+          "y": 448,
+          "width": 224,
+          "height": 64,
+          "blocksPath": true,
+          "depthAnchor": "top",
+          "interactionPoints": [
+            {
+              "x": 17,
+              "y": 20,
+              "approachFrom": "bottom"
+            },
+            {
+              "x": 86,
+              "y": 20,
+              "approachFrom": "bottom"
+            },
+            {
+              "x": 156,
+              "y": 20,
+              "approachFrom": "bottom"
+            }
+          ]
+        },
+        {
+          "id": "coffee-table",
+          "type": "object",
+          "asset": "images/map/objects/coffee-table.png",
+          "x": 96,
+          "y": 576,
+          "width": 96,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "candle-light",
+          "type": "object",
+          "asset": "images/map/objects/candle.png",
+          "x": 278,
+          "y": 672,
+          "width": 32,
+          "height": 57,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "corridor",
+      "label": "Corridor",
+      "x": 320,
+      "y": 480,
+      "width": 576,
+      "height": 64,
+      "objects": [
+        {
+          "id": "corridor-floor",
+          "type": "floor",
+          "x": 320,
+          "y": 480,
+          "width": 576,
+          "height": 64,
+          "blocksPath": false,
+          "tiles": {
+            "left": "images/map/rooms/corridor/floor/left.png",
+            "center": "images/map/rooms/corridor/floor/center.png",
+            "right": "images/map/rooms/corridor/floor/right.png",
+            "tileWidth": 64,
+            "tileHeight": 64
+          }
+        },
+        {
+          "id": "corridor-door-1",
+          "type": "door",
+          "asset": "",
+          "x": 320,
+          "y": 480,
+          "width": 10,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "wall-top-natsuki-left",
+          "type": "wall",
+          "asset": "",
+          "x": 320,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-natsuki-right",
+          "type": "wall",
+          "asset": "",
+          "x": 448,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-ouri-left",
+          "type": "wall",
+          "asset": "",
+          "x": 512,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-ouri-right",
+          "type": "wall",
+          "asset": "",
+          "x": 640,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-keito-left",
+          "type": "wall",
+          "asset": "",
+          "x": 704,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-keito-right",
+          "type": "wall",
+          "asset": "",
+          "x": 832,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-frieren",
+      "label": "Frieren's Room",
+      "x": 320,
+      "y": 288,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-frieren-floor",
+          "type": "floor",
+          "asset": "images/map/characters/frieren/room/floor.png",
+          "x": 320,
+          "y": 352,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-frieren-wall",
+          "type": "wall",
+          "asset": "images/map/characters/frieren/room/wall.png",
+          "x": 320,
+          "y": 288,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-frieren-door",
+          "type": "door",
+          "asset": "",
+          "x": 384,
+          "y": 480,
+          "width": 64,
+          "height": 10,
+          "blocksPath": false
+        },
+        {
+          "id": "private-frieren-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/objects/treasure.png",
+          "x": 448,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true,
+          "animation": {
+            "frameWidth": 64,
+            "frameHeight": 64,
+            "frameCount": 2,
+            "frameDurationMs": 5000,
+            "repeat": -1
+          }
+        },
+        {
+          "id": "bed-frieren",
+          "type": "furniture",
+          "asset": "images/map/characters/frieren/object/bed.png",
+          "x": 448,
+          "y": 384,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-top-0",
+          "type": "wall",
+          "asset": "",
+          "x": 320,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-fern",
+      "label": "Fern's Room",
+      "x": 320,
+      "y": 544,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-fern-floor",
+          "type": "floor",
+          "asset": "images/map/characters/fern/room/floor.png",
+          "x": 320,
+          "y": 608,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-fern-wall",
+          "type": "wall",
+          "asset": "images/map/characters/fern/room/wall.png",
+          "x": 320,
+          "y": 544,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-fern-door",
+          "type": "door",
+          "asset": "images/map/rooms/room-door.png",
+          "x": 384,
+          "y": 544,
+          "width": 64,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "private-fern-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/characters/fern/object/decor1.png",
+          "x": 448,
+          "y": 576,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "bed-fern",
+          "type": "furniture",
+          "asset": "images/map/characters/fern/object/bed.png",
+          "x": 448,
+          "y": 640,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-bot-0",
+          "type": "wall",
+          "asset": "",
+          "x": 320,
+          "y": 544,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-himmel",
+      "label": "Himmel's Room",
+      "x": 512,
+      "y": 288,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-himmel-floor",
+          "type": "floor",
+          "asset": "images/map/characters/himmel/room/floor.png",
+          "x": 512,
+          "y": 352,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-himmel-wall",
+          "type": "wall",
+          "asset": "images/map/characters/himmel/room/wall.png",
+          "x": 512,
+          "y": 288,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-himmel-door",
+          "type": "door",
+          "asset": "",
+          "x": 576,
+          "y": 480,
+          "width": 64,
+          "height": 10,
+          "blocksPath": false
+        },
+        {
+          "id": "private-himmel-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/objects/dragon-horn.png",
+          "x": 640,
+          "y": 310,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true,
+          "animation": {
+            "frameWidth": 64,
+            "frameHeight": 64,
+            "frameCount": 2,
+            "frameDurationMs": 2100,
+            "repeat": -1
+          }
+        },
+        {
+          "id": "bed-himmel",
+          "type": "furniture",
+          "asset": "images/map/characters/himmel/object/bed.png",
+          "x": 640,
+          "y": 384,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-top-1",
+          "type": "wall",
+          "asset": "",
+          "x": 512,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-stark",
+      "label": "Stark's Room",
+      "x": 512,
+      "y": 544,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-stark-floor",
+          "type": "floor",
+          "asset": "images/map/characters/stark/room/floor.png",
+          "x": 512,
+          "y": 608,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-stark-wall",
+          "type": "wall",
+          "asset": "images/map/characters/stark/room/wall.png",
+          "x": 512,
+          "y": 544,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-stark-door",
+          "type": "door",
+          "asset": "images/map/rooms/room-door.png",
+          "x": 576,
+          "y": 544,
+          "width": 64,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "private-stark-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/characters/stark/object/decor1.png",
+          "x": 640,
+          "y": 576,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "bed-stark",
+          "type": "furniture",
+          "asset": "images/map/characters/stark/object/bed.png",
+          "x": 640,
+          "y": 640,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-bot-1",
+          "type": "wall",
+          "asset": "",
+          "x": 512,
+          "y": 544,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-eisen",
+      "label": "Eisen's Room",
+      "x": 704,
+      "y": 288,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-eisen-floor",
+          "type": "floor",
+          "asset": "images/map/characters/eisen/room/floor.png",
+          "x": 704,
+          "y": 352,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-eisen-wall",
+          "type": "wall",
+          "asset": "images/map/characters/eisen/room/wall.png",
+          "x": 704,
+          "y": 288,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-eisen-door",
+          "type": "door",
+          "asset": "",
+          "x": 768,
+          "y": 480,
+          "width": 64,
+          "height": 10,
+          "blocksPath": false
+        },
+        {
+          "id": "private-eisen-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/characters/eisen/object/decor1.png",
+          "x": 832,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "bed-eisen",
+          "type": "furniture",
+          "asset": "images/map/characters/eisen/object/bed.png",
+          "x": 832,
+          "y": 384,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-top-2",
+          "type": "wall",
+          "asset": "",
+          "x": 704,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-heiter",
+      "label": "Heiter's Room",
+      "x": 704,
+      "y": 544,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-heiter-floor",
+          "type": "floor",
+          "asset": "images/map/characters/heiter/room/floor.png",
+          "x": 704,
+          "y": 608,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-heiter-wall",
+          "type": "wall",
+          "asset": "images/map/characters/heiter/room/wall.png",
+          "x": 704,
+          "y": 544,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-heiter-door",
+          "type": "door",
+          "asset": "images/map/rooms/room-door.png",
+          "x": 768,
+          "y": 544,
+          "width": 64,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "private-heiter-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/characters/heiter/object/decor1.png",
+          "x": 832,
+          "y": 576,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "bed-heiter",
+          "type": "furniture",
+          "asset": "images/map/characters/heiter/object/bed.png",
+          "x": 832,
+          "y": 640,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-bot-2",
+          "type": "wall",
+          "asset": "",
+          "x": 704,
+          "y": 544,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    }
+  ],
+  "characters": [
+    {
+      "id": "frieren",
+      "agentId": "main",
+      "name": "Frieren",
+      "privateRoomId": "private-frieren",
+      "spriteSheet": {
+        "inside": "images/map/characters/frieren/inside.png",
+        "outside": "images/map/characters/frieren/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "fern",
+      "agentId": "social-media-post-writer",
+      "name": "Fern",
+      "privateRoomId": "private-fern",
+      "spriteSheet": {
+        "inside": "images/map/characters/fern/inside.png",
+        "outside": "images/map/characters/fern/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "himmel",
+      "agentId": "youtube-script-writer",
+      "name": "Himmel",
+      "privateRoomId": "private-himmel",
+      "spriteSheet": {
+        "inside": "images/map/characters/himmel/inside.png",
+        "outside": "images/map/characters/himmel/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "stark",
+      "agentId": "news-crawler",
+      "name": "Stark",
+      "privateRoomId": "private-stark",
+      "spriteSheet": {
+        "inside": "images/map/characters/stark/inside.png",
+        "outside": "images/map/characters/stark/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "eisen",
+      "agentId": "seo-expert",
+      "name": "Eisen",
+      "privateRoomId": "private-eisen",
+      "spriteSheet": {
+        "inside": "images/map/characters/eisen/inside.png",
+        "outside": "images/map/characters/eisen/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "heiter",
+      "agentId": "researcher",
+      "name": "Heiter",
+      "privateRoomId": "private-heiter",
+      "spriteSheet": {
+        "inside": "images/map/characters/heiter/inside.png",
+        "outside": "images/map/characters/heiter/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    }
+  ]
+}

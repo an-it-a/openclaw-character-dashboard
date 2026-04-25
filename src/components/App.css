@@ -1,0 +1,65 @@
+.app-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-canvas-area {
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Phaser injects a canvas; width/height are set as inline styles driven by
+   worldConfig.canvasWidth / canvasHeight so that changing world.json is enough. */
+.phaser-container {
+  flex-shrink: 0;
+}
+
+/* Shown while world.json is being fetched */
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: monospace;
+  font-size: 18px;
+}
+
+/* Shown if world.json fails to load */
+.app-load-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a2e;
+  color: #ff4444;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.app-load-error pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 800px;
+}
+
+.phaser-container canvas {
+  display: block;
+}

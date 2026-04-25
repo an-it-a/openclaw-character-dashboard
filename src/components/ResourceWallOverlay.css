@@ -1,0 +1,308 @@
+.resource-wall-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resource-wall-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+}
+
+.resource-wall-overlay__panel {
+  position: relative;
+  z-index: 1;
+  /* width / height driven by inline style from React; max-* acts as safety clamp */
+  max-width: 98vw;
+  max-height: 96vh;
+  min-width: 480px;
+  min-height: 320px;
+  background: #12122a;
+  border: 1px solid #2a2a5a;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+/* Header */
+.resource-wall-overlay__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.resource-wall-overlay__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #c0c0f0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Right-side controls group */
+.resource-wall-overlay__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Font size widget */
+.resource-wall-overlay__font-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #1a1a30;
+  border: 1px solid #2a2a4a;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.resource-wall-overlay__font-btn {
+  background: none;
+  border: none;
+  color: #8888cc;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+  line-height: 1;
+}
+
+.resource-wall-overlay__font-btn:hover:not(:disabled) {
+  background: #2a2a4a;
+  color: #c8bfff;
+}
+
+.resource-wall-overlay__font-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* The middle "current size" button acts as a reset */
+.resource-wall-overlay__font-size {
+  background: none;
+  border: none;
+  border-left: 1px solid #2a2a4a;
+  border-right: 1px solid #2a2a4a;
+  color: #aaaadd;
+  font-size: 11px;
+  font-family: "Fira Code", monospace;
+  padding: 4px 7px;
+  cursor: pointer;
+  min-width: 26px;
+  text-align: center;
+  transition:
+    background 0.12s,
+    color 0.12s;
+  line-height: 1;
+}
+
+.resource-wall-overlay__font-size:hover {
+  background: #2a2a4a;
+  color: #c8bfff;
+}
+
+.resource-wall-overlay__close {
+  background: none;
+  border: none;
+  color: #666688;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.resource-wall-overlay__close:hover {
+  color: #e0e0ff;
+  background: #2a2a4a;
+}
+
+/* Breadcrumb */
+.resource-wall-overlay__breadcrumb {
+  padding: 8px 20px;
+  border-bottom: 1px solid #2a2a4a;
+  font-size: 12px;
+  color: #666688;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.resource-wall-overlay__crumb {
+  background: none;
+  border: none;
+  color: #8888cc;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: monospace;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: color 0.15s;
+}
+
+.resource-wall-overlay__crumb:hover {
+  color: #c0c0ff;
+}
+
+.resource-wall-overlay__crumb-sep {
+  color: #444466;
+  padding: 0 2px;
+}
+
+/* Body */
+.resource-wall-overlay__body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* File list */
+.resource-wall-overlay__file-list {
+  width: 260px;
+  min-width: 260px;
+  border-right: 1px solid #2a2a4a;
+  overflow-y: auto;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.resource-wall-overlay__status {
+  font-size: 12px;
+  color: #555577;
+  padding: 16px;
+  text-align: center;
+}
+
+.resource-wall-overlay__error {
+  font-size: 12px;
+  color: #ff6666;
+  padding: 12px 16px;
+}
+
+.resource-wall-overlay__entry-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.resource-wall-overlay__entry-row:hover .resource-wall-overlay__entry-download {
+  opacity: 1;
+}
+
+.resource-wall-overlay__entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  background: none;
+  border: none;
+  color: #c0c0e0;
+  font-size: var(--rw-font-size, 13px);
+  font-family: monospace;
+  cursor: pointer;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  transition: background 0.12s;
+  border-radius: 0;
+}
+
+.resource-wall-overlay__entry:hover {
+  background: #1e1e3a;
+}
+
+.resource-wall-overlay__entry--active {
+  background: #1e1e4a;
+  color: #a0a0ff;
+}
+
+.resource-wall-overlay__entry-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.resource-wall-overlay__entry-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin-right: 6px;
+  background: none;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  color: #8888cc;
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0;
+  transition:
+    opacity 0.12s,
+    background 0.12s,
+    color 0.12s;
+  line-height: 1;
+}
+
+.resource-wall-overlay__entry-download:hover {
+  background: #2a2a5a;
+  color: #c0c0ff;
+  border-color: #5a5aaa;
+}
+
+/* Preview */
+.resource-wall-overlay__preview {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------------------
+   Resize handle — bottom-right corner grip
+   --------------------------------------------------------------------------- */
+
+.resource-wall-overlay__resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  /* Draw a subtle diagonal grip using a repeating linear-gradient */
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 2px,
+    #3a3a6a 2px,
+    #3a3a6a 3px
+  );
+  border-radius: 0 0 12px 0;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+  z-index: 2;
+}
+
+.resource-wall-overlay__resize-handle:hover {
+  opacity: 1;
+}
