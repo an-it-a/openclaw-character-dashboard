@@ -41,7 +41,7 @@ type GatewayResponseMessage = {
   type: "res";
   id: string;
   ok: boolean;
-  payload?: unknown;
+  payload?: any;
   error?: {
     message?: string;
   };
@@ -212,6 +212,11 @@ function startServer(port: number): void {
       console.warn(`[resource-wall server] Serving files from: ${SHARED_ROOT}`);
       console.warn(`[resource-wall server] Targeting OpenClaw Gateway at: ${gatewayHost}`);
       console.warn(`[resource-wall server] OpenClaw Home is set to: ${OPENCLAW_HOME}`);
+
+      void gatewayConfigPromise.then((config) => {
+        const monitor = new GatewayEventMonitor(config);
+        monitor.start();
+      });
     })
     .on("error", (error: NodeJS.ErrnoException) => {
       if (error.code === "EADDRINUSE") {
@@ -224,6 +229,131 @@ function startServer(port: number): void {
       throw error;
     });
 }
+
+class GatewayEventMonitor {
+  private ws: WebSocket | null = null;
+  private config: GatewayConfig;
+  private shouldReconnect = true;
+  private runRoles = new Map<string, string>();
+
+  constructor(config: GatewayConfig) {
+    this.config = config;
+  }
+
+  start() {
+    if (!this.shouldReconnect) return;
+    console.log(`[monitor] Connecting to ${this.config.wsUrl} (token length: ${this.config.token.length})...`);
+    this.ws = new WebSocket(this.config.wsUrl, {
+      headers: { Origin: this.config.httpUrl },
+    });
+
+    this.ws.on("message", (data: RawData) => {
+      const rawString = String(data);
+      const message = parseGatewayMessage(data);
+      if (!message) return;
+
+      if (message.type === "event") {
+        if (message.event === "connect.challenge") {
+          this.ws?.send(
+            JSON.stringify({
+              type: "req",
+              id: "connect",
+              method: "connect",
+              params: {
+                minProtocol: 3,
+                maxProtocol: 3,
+                client: {
+                  id: "openclaw-control-ui",
+                  version: "openclaw-character-dashboard-monitor",
+                  platform: "node",
+                  mode: "webchat",
+                  instanceId: "openclaw-character-dashboard-monitor",
+                },
+                role: "operator",
+                scopes: ["operator.read"],
+                caps: ["tool-events"],
+                auth: this.config.token ? { token: this.config.token } : {},
+                userAgent: "node-monitor",
+                locale: "en",
+              },
+            }),
+          );
+          return;
+        }
+
+        const raw = JSON.parse(rawString);
+        const payload = raw.payload;
+        if (!payload) return;
+
+        if (message.event === "chat") {
+          const runId = payload.runId || "unknown";
+          const messageData = payload.message || {};
+          
+          // Capture role if present, otherwise fallback to cached role for this run
+          let role = (typeof messageData.role === "string" ? messageData.role : "").toLowerCase();
+          if (role) {
+            this.runRoles.set(runId, role);
+          } else {
+            role = this.runRoles.get(runId) || "assistant";
+          }
+
+          const content = typeof messageData.content === "string" 
+            ? messageData.content 
+            : Array.isArray(messageData.content)
+              ? messageData.content.map((p: any) => p.text || "").join("")
+              : typeof messageData.text === "string"
+                ? messageData.text
+                : "";
+
+          if (content) {
+            console.log(`[AGENT MESSAGE] [${runId}] ${role.toUpperCase()}: ${content}`);
+          }
+
+          // Cleanup role cache on final/error states
+          if (payload.state === "final" || payload.state === "error" || payload.state === "aborted") {
+            this.runRoles.delete(runId);
+          }
+        } else if (message.event === "agent") {
+          const stream = payload.stream || "unknown";
+          const runId = payload.runId || "none";
+          if (payload.data && payload.data.chunk) {
+             console.log(`[AGENT STREAM] [${runId}] ${stream.toUpperCase()}: ${payload.data.chunk}`);
+          } else if (payload.data && payload.data.phase) {
+             console.log(`[AGENT LIFECYCLE] [${runId}] PHASE: ${payload.data.phase}`);
+             if (payload.data.phase === "end" || payload.data.phase === "error") {
+               this.runRoles.delete(runId);
+             }
+          }
+        }
+      } else if (message.type === "res" && message.id === "connect") {
+        if (message.ok) {
+          console.log(`[monitor] Successfully connected to gateway`);
+        } else {
+          console.error(`[monitor] Gateway connect failed: ${message.error?.message}`);
+        }
+      }
+    });
+
+    this.ws.on("close", () => {
+      console.warn(`[monitor] WebSocket closed`);
+      this.ws = null;
+      if (this.shouldReconnect) {
+        console.log(`[monitor] Reconnecting in 5s...`);
+        setTimeout(() => this.start(), 5000);
+      }
+    });
+
+    this.ws.on("error", (err) => {
+      console.error(`[monitor] WebSocket error: ${err.message}`);
+    });
+  }
+
+  stop() {
+    this.shouldReconnect = false;
+    this.ws?.close();
+  }
+}
+
 
 function loadServerEnv(): void {
   const envDir = process.cwd();
