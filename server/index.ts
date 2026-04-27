@@ -5,7 +5,7 @@ import path from "node:path";
 import { createReadStream, existsSync, readFileSync } from "node:fs";
 import os from "node:os";
 import { lookup as mimeLookup } from "mime-types";
-import { WebSocket } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import type { RawData } from "ws";
 
 type GatewayConfig = {
@@ -13,6 +13,33 @@ type GatewayConfig = {
   wsUrl: string;
   token: string;
 };
+
+const dashboardWss = new WebSocketServer({ noServer: true });
+const connectedClients = new Set<WebSocket>();
+
+function agentIdFromSessionKey(key: string | undefined): string {
+  if (!key) return "";
+  const parts = key.split(":");
+  return parts[0] === "agent" ? (parts[1] ?? "") : "";
+}
+
+dashboardWss.on("connection", (ws: WebSocket) => {
+  connectedClients.add(ws);
+  console.log(`[dashboard-ws] Client connected (total: ${connectedClients.size})`);
+  ws.on("close", () => {
+    connectedClients.delete(ws);
+    console.log(`[dashboard-ws] Client disconnected (total: ${connectedClients.size})`);
+  });
+});
+
+function broadcastToDashboard(data: any) {
+  const payload = JSON.stringify(data);
+  for (const client of connectedClients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
+  }
+}
 
 type GatewayAgentsPayload = {
   agents?: Array<{ id?: string }>;
@@ -203,31 +230,42 @@ function sanitiseRelPath(raw: unknown): string {
 
 function startServer(port: number): void {
   const gatewayHost = process.env["GATEWAY_HOST"] ?? "127.0.0.1";
-  app
-    .listen(port, "0.0.0.0", () => {
-      console.warn(
-        `[resource-wall server] Listening on http://0.0.0.0:${port}`,
-      );
-      console.warn(`[resource-wall server] CWD: ${process.cwd()}`);
-      console.warn(`[resource-wall server] Serving files from: ${SHARED_ROOT}`);
-      console.warn(`[resource-wall server] Targeting OpenClaw Gateway at: ${gatewayHost}`);
-      console.warn(`[resource-wall server] OpenClaw Home is set to: ${OPENCLAW_HOME}`);
+  const server = app.listen(port, "0.0.0.0", () => {
+    console.warn(
+      `[resource-wall server] Listening on http://0.0.0.0:${port}`,
+    );
+    console.warn(`[resource-wall server] CWD: ${process.cwd()}`);
+    console.warn(`[resource-wall server] Serving files from: ${SHARED_ROOT}`);
+    console.warn(`[resource-wall server] Targeting OpenClaw Gateway at: ${gatewayHost}`);
+    console.warn(`[resource-wall server] OpenClaw Home is set to: ${OPENCLAW_HOME}`);
 
-      void gatewayConfigPromise.then((config) => {
-        const monitor = new GatewayEventMonitor(config);
-        monitor.start();
-      });
-    })
-    .on("error", (error: NodeJS.ErrnoException) => {
-      if (error.code === "EADDRINUSE") {
-        throw new Error(
-          `[resource-wall server] Port ${port} is already in use. ` +
-            `Update API_PORT/VITE_API_PORT in your env config or stop the process using that port.`,
-        );
-      }
-
-      throw error;
+    void gatewayConfigPromise.then((config) => {
+      const monitor = new GatewayEventMonitor(config);
+      monitor.start();
     });
+  });
+
+  server.on("upgrade", (request, socket, head) => {
+    const url = new URL(request.url || "", `http://${request.headers.host}`);
+    if (url.pathname === "/api/ws") {
+      dashboardWss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
+        dashboardWss.emit("connection", ws, request);
+      });
+    } else {
+      socket.destroy();
+    }
+  });
+
+  server.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code === "EADDRINUSE") {
+      throw new Error(
+        `[resource-wall server] Port ${port} is already in use. ` +
+          `Update API_PORT/VITE_API_PORT in your env config or stop the process using that port.`,
+      );
+    }
+
+    throw error;
+  });
 }
 
 class GatewayEventMonitor {
@@ -307,19 +345,46 @@ class GatewayEventMonitor {
 
           if (content) {
             console.log(`[AGENT MESSAGE] [${runId}] ${role.toUpperCase()}: ${content}`);
+            broadcastToDashboard({
+              type: "agent-message",
+              runId,
+              role,
+              content,
+              sessionKey: payload.sessionKey,
+              agentId: agentIdFromSessionKey(payload.sessionKey),
+            });
           }
 
           // Cleanup role cache on final/error states
           if (payload.state === "final" || payload.state === "error" || payload.state === "aborted") {
             this.runRoles.delete(runId);
+            broadcastToDashboard({
+              type: "agent-message-final",
+              runId,
+              state: payload.state,
+              agentId: agentIdFromSessionKey(payload.sessionKey),
+            });
           }
         } else if (message.event === "agent") {
           const stream = payload.stream || "unknown";
           const runId = payload.runId || "none";
           if (payload.data && payload.data.chunk) {
              console.log(`[AGENT STREAM] [${runId}] ${stream.toUpperCase()}: ${payload.data.chunk}`);
+             broadcastToDashboard({
+               type: "agent-stream",
+               runId,
+               stream,
+               chunk: payload.data.chunk,
+               agentId: agentIdFromSessionKey(payload.sessionKey),
+             });
           } else if (payload.data && payload.data.phase) {
              console.log(`[AGENT LIFECYCLE] [${runId}] PHASE: ${payload.data.phase}`);
+             broadcastToDashboard({
+               type: "agent-lifecycle",
+               runId,
+               phase: payload.data.phase,
+               agentId: agentIdFromSessionKey(payload.sessionKey),
+             });
              if (payload.data.phase === "end" || payload.data.phase === "error") {
                this.runRoles.delete(runId);
              }
@@ -343,7 +408,7 @@ class GatewayEventMonitor {
       }
     });
 
-    this.ws.on("error", (err) => {
+    this.ws.on("error", (err: Error) => {
       console.error(`[monitor] WebSocket error: ${err.message}`);
     });
   }

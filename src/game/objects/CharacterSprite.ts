@@ -62,6 +62,9 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
   private currentVariant: SpriteVariant;
   private currentClip: AnimationClip = "stand";
   private activeTween: Phaser.Tweens.Tween | null = null;
+  private speechBubble: Phaser.GameObjects.Container | null = null;
+  private speechText: Phaser.GameObjects.Text | null = null;
+  private speechBg: Phaser.GameObjects.Graphics | null = null;
 
   constructor(
     scene: Phaser.Scene,
@@ -82,11 +85,92 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
 
     this.registerAnimations(config);
     this.playClip("stand");
+    this.createSpeechBubble();
   }
 
-  // ---------------------------------------------------------------------------
-  // Public API
-  // ---------------------------------------------------------------------------
+  private createSpeechBubble(): void {
+    const bubbleWidth = 180;
+    const padding = 10;
+
+    this.speechBg = this.scene.add.graphics();
+    this.speechText = this.scene.add.text(0, 0, "", {
+      fontSize: "14px",
+      fontFamily: "monospace",
+      color: "#ffffff",
+      align: "left",
+      wordWrap: { width: bubbleWidth - padding * 2 }
+    });
+    this.speechText.setOrigin(0.5, 1);
+
+    this.speechBubble = this.scene.add.container(0, 0, [this.speechText]);
+    this.speechBubble.setVisible(false);
+    this.speechBubble.setDepth(20000); // Well above characters
+  }
+
+  showSpeech(text: string): void {
+    if (!this.speechText || !this.speechBubble || !this.speechBg) return;
+    
+    this.speechText.setText(text);
+    this.speechBubble.setVisible(true);
+    
+    // Redraw background
+    const bounds = this.speechText.getBounds();
+    const w = bounds.width + 20;
+    const h = bounds.height + 15;
+    
+    this.speechBg.clear();
+    this.speechBg.fillStyle(0x000000, 0.85);
+    this.speechBg.lineStyle(2, 0xffffff, 1);
+    this.speechBg.fillRoundedRect(-w / 2, -h, w, h, 8);
+    this.speechBg.strokeRoundedRect(-w / 2, -h, w, h, 8);
+    
+    // Add a little triangle at the bottom
+    this.speechBg.beginPath();
+    this.speechBg.moveTo(-8, 0);
+    this.speechBg.lineTo(0, 8);
+    this.speechBg.lineTo(8, 0);
+    this.speechBg.closePath();
+    this.speechBg.fillPath();
+    this.speechBg.strokePath();
+
+    if (this.speechBubble.list[0] !== this.speechBg) {
+      this.speechBubble.addAt(this.speechBg, 0);
+    }
+    
+    this.updateSpeechPosition();
+  }
+
+  hideSpeech(): void {
+    this.speechBubble?.setVisible(false);
+  }
+
+  private updateSpeechPosition(): void {
+    if (!this.speechBubble) return;
+
+    // Position above head
+    let targetX = this.x;
+    let targetY = this.y - this.displayHeight - 15;
+
+    // Keep on screen
+    const bubbleBounds = this.speechBubble.getBounds();
+    const sceneWidth = this.scene.scale.width;
+
+    if (targetX - bubbleBounds.width / 2 < 10) targetX = bubbleBounds.width / 2 + 10;
+    if (targetX + bubbleBounds.width / 2 > sceneWidth - 10) targetX = sceneWidth - bubbleBounds.width / 2 - 10;
+    if (targetY - bubbleBounds.height < 10) targetY = bubbleBounds.height + 10;
+
+    this.speechBubble.setPosition(targetX, targetY);
+  }
+
+  preUpdate(time: number, delta: number): void {
+    super.preUpdate(time, delta);
+    if (this.speechBubble?.visible) {
+      this.updateSpeechPosition();
+    }
+  }
+
+  // ... (rest of the class)
+
 
   /** Play a named animation clip. "walk-right" is walk-left with flipX. */
   playClip(clip: AnimationClip): void {

@@ -7,6 +7,7 @@ import type { StateMachineCallbacks } from "@/game/objects/CharacterStateMachine
 import { CollisionGrid, GRID_CELL } from "@/game/pathfinding/CollisionGrid";
 import { PathFinder } from "@/game/pathfinding/PathFinder";
 import { LiveDataSource } from "@/data/live";
+import { LiveEventSource } from "@/data/liveEvents";
 import { useWorldStore } from "@/store/worldStore";
 import type { LiveDataStatus } from "@/store/worldStore";
 import { useCharacterStore } from "@/store/characterStore";
@@ -53,6 +54,7 @@ export class WorldScene extends Phaser.Scene {
   private characters: Map<string, CharacterRecord> = new Map();
   private characterIdByAgentId: Map<string, string> = new Map();
   private dataSource: DataSource | null = null;
+  private eventSource: LiveEventSource | null = null;
 
   /** Flat index: objectId → WorldObject (built once on create) */
   private objectIndex: Map<string, WorldObject> = new Map();
@@ -85,6 +87,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.clearSofaTimers();
+      this.eventSource?.stop();
     });
 
     // --- Static map ---
@@ -194,6 +197,11 @@ export class WorldScene extends Phaser.Scene {
     const isMockMode = useWorldStore.getState().isMockMode;
     this.startDataSource(isMockMode);
 
+    if (!isMockMode) {
+      this.eventSource = new LiveEventSource();
+      this.eventSource.start();
+    }
+
     // Re-start data source if mock mode is toggled while the scene is active
     useWorldStore.subscribe((state, prev) => {
       if (state.isMockMode !== prev.isMockMode) {
@@ -211,6 +219,21 @@ export class WorldScene extends Phaser.Scene {
         useCharacterStore.getState().clearPendingForce();
       }
     });
+
+    // Subscribe to character messages to show/hide speech bubbles
+    useCharacterStore.subscribe(
+      (state) => {
+        const messages = state.characterMessages;
+        for (const [charId, record] of this.characters.entries()) {
+          const msg = messages[charId];
+          if (msg) {
+            record.sprite.showSpeech(msg.text);
+          } else {
+            record.sprite.hideSpeech();
+          }
+        }
+      }
+    );
   }
 
   update(_time: number, delta: number): void {
