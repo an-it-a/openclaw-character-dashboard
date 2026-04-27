@@ -1,0 +1,15 @@
+services:
+  dashboard:
+    build: .
+    # In host mode, ports are not mapped; the app uses the host's network directly.
+    # The dashboard will be available on whatever port API_PORT is set to.
+    network_mode: "host"
+    environment:
+      - API_PORT=${API_PORT:-3001}
+      - OPENCLAW_HOME=/data/.openclaw
+      - SHARED_ROOT=/data/shared
+      - GATEWAY_HOST=127.0.0.1
+    volumes:
+      - ${OPENCLAW_DATA_PATH:-~/.openclaw}:/data/.openclaw
+      - ${SHARED_DATA_PATH:-~/.openclaw/shared}:/data/shared
+    restart: unless-stopped

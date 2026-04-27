@@ -22,3 +22,4 @@ spec/
 # Logs
 *.log
 npm-debug.log*
+/public/*

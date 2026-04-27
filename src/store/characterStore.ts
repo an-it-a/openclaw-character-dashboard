@@ -45,12 +45,20 @@ export type PendingForce = {
   subState: SubState;
 };
 
+export type CharacterMessage = {
+  text: string;
+  role: string;
+  timestamp: number;
+};
+
 type CharacterStoreState = {
   characterStates: Record<string, CharacterState>;
+  characterMessages: Record<string, CharacterMessage>;
   occupiedPoints: OccupancyMap;
   pendingForce: PendingForce | null;
 
   setCharacterState: (state: CharacterState) => void;
+  setCharacterMessage: (characterId: string, message: CharacterMessage | null) => void;
   claimPoint: (pointKey: string, characterId: string) => boolean;
   releasePoint: (pointKey: string, characterId: string) => void;
   getOccupiedPointKey: (characterId: string) => string | null;
@@ -64,6 +72,7 @@ type CharacterStoreState = {
 
 export const useCharacterStore = create<CharacterStoreState>()((set, get) => ({
   characterStates: {},
+  characterMessages: {},
   occupiedPoints: {},
   pendingForce: null,
 
@@ -71,6 +80,17 @@ export const useCharacterStore = create<CharacterStoreState>()((set, get) => ({
     set((prev) => ({
       characterStates: { ...prev.characterStates, [state.characterId]: state },
     })),
+
+  setCharacterMessage: (characterId, message) =>
+    set((prev) => {
+      const next = { ...prev.characterMessages };
+      if (message === null) {
+        delete next[characterId];
+      } else {
+        next[characterId] = message;
+      }
+      return { characterMessages: next };
+    }),
 
   claimPoint: (pointKey, characterId) => {
     const { occupiedPoints } = get();

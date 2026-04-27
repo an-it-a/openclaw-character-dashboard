@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { createReadStream, existsSync, readFileSync } from "node:fs";
 import os from "node:os";
 import { lookup as mimeLookup } from "mime-types";
-import { WebSocket } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import type { RawData } from "ws";
 
 type GatewayConfig = {
@@ -13,6 +13,33 @@ type GatewayConfig = {
   wsUrl: string;
   token: string;
 };
+
+const dashboardWss = new WebSocketServer({ noServer: true });
+const connectedClients = new Set<WebSocket>();
+
+function agentIdFromSessionKey(key: string | undefined): string {
+  if (!key) return "";
+  const parts = key.split(":");
+  return parts[0] === "agent" ? (parts[1] ?? "") : "";
+}
+
+dashboardWss.on("connection", (ws: WebSocket) => {
+  connectedClients.add(ws);
+  console.log(`[dashboard-ws] Client connected (total: ${connectedClients.size})`);
+  ws.on("close", () => {
+    connectedClients.delete(ws);
+    console.log(`[dashboard-ws] Client disconnected (total: ${connectedClients.size})`);
+  });
+});
+
+function broadcastToDashboard(data: any) {
+  const payload = JSON.stringify(data);
+  for (const client of connectedClients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
+  }
+}
 
 type GatewayAgentsPayload = {
   agents?: Array<{ id?: string }>;
@@ -41,7 +68,7 @@ type GatewayResponseMessage = {
   type: "res";
   id: string;
   ok: boolean;
-  payload?: unknown;
+  payload?: any;
   error?: {
     message?: string;
   };
@@ -72,11 +99,21 @@ app.use(cors({ origin: /localhost/ }));
 app.use(express.json());
 
 // ---------------------------------------------------------------------------
+// Static Files (Production)
+// ---------------------------------------------------------------------------
+
+const DIST_PATH = path.join(process.cwd(), "dist");
+if (existsSync(DIST_PATH)) {
+  console.warn(`[resource-wall server] Serving static files from: ${DIST_PATH}`);
+  app.use(express.static(DIST_PATH));
+}
+
+// ---------------------------------------------------------------------------
 // GET /api/openclaw/snapshot
 // Proxies a live OpenClaw gateway snapshot over HTTP for the frontend.
 // ---------------------------------------------------------------------------
 
-app.get("/api/openclaw/snapshot", async (_req, res): Promise<void> => {
+app.get("/api/openclaw/snapshot", async (_req: Request, res: Response): Promise<void> => {
   try {
     const payload = await fetchGatewaySnapshot(gatewayConfigPromise);
     res.status(200).json(payload);
@@ -92,7 +129,7 @@ app.get("/api/openclaw/snapshot", async (_req, res): Promise<void> => {
 // Lists directory entries under SHARED_ROOT/<path>
 // ---------------------------------------------------------------------------
 
-app.get("/api/files", async (req, res): Promise<void> => {
+app.get("/api/files", async (req: Request, res: Response): Promise<void> => {
   const rel = sanitiseRelPath(req.query["path"]);
   const abs = path.join(SHARED_ROOT, rel);
 
@@ -130,7 +167,7 @@ app.get("/api/files", async (req, res): Promise<void> => {
 // Streams a file from SHARED_ROOT/<path>
 // ---------------------------------------------------------------------------
 
-app.get("/api/file", async (req, res): Promise<void> => {
+app.get("/api/file", async (req: Request, res: Response): Promise<void> => {
   const rel = sanitiseRelPath(req.query["path"]);
   const abs = path.join(SHARED_ROOT, rel);
 
@@ -158,6 +195,19 @@ app.get("/api/file", async (req, res): Promise<void> => {
 });
 
 // ---------------------------------------------------------------------------
+// SPA Fallback (Production)
+// ---------------------------------------------------------------------------
+
+if (existsSync(DIST_PATH)) {
+  app.get("*", (req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith("/api")) {
+      return next();
+    }
+    res.sendFile(path.join(DIST_PATH, "index.html"));
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Start
 // ---------------------------------------------------------------------------
 
@@ -179,24 +229,196 @@ function sanitiseRelPath(raw: unknown): string {
 }
 
 function startServer(port: number): void {
-  app
-    .listen(port, () => {
-      console.warn(
-        `[resource-wall server] Listening on http://localhost:${port}`,
-      );
-      console.warn(`[resource-wall server] Serving files from: ${SHARED_ROOT}`);
-    })
-    .on("error", (error: NodeJS.ErrnoException) => {
-      if (error.code === "EADDRINUSE") {
-        throw new Error(
-          `[resource-wall server] Port ${port} is already in use. ` +
-            `Update API_PORT/VITE_API_PORT in your env config or stop the process using that port.`,
-        );
-      }
+  const gatewayHost = process.env["GATEWAY_HOST"] ?? "127.0.0.1";
+  const server = app.listen(port, "0.0.0.0", () => {
+    console.warn(
+      `[resource-wall server] Listening on http://0.0.0.0:${port}`,
+    );
+    console.warn(`[resource-wall server] CWD: ${process.cwd()}`);
+    console.warn(`[resource-wall server] Serving files from: ${SHARED_ROOT}`);
+    console.warn(`[resource-wall server] Targeting OpenClaw Gateway at: ${gatewayHost}`);
+    console.warn(`[resource-wall server] OpenClaw Home is set to: ${OPENCLAW_HOME}`);
 
-      throw error;
+    void gatewayConfigPromise.then((config) => {
+      const monitor = new GatewayEventMonitor(config);
+      monitor.start();
     });
+  });
+
+  server.on("upgrade", (request, socket, head) => {
+    const url = new URL(request.url || "", `http://${request.headers.host}`);
+    if (url.pathname === "/api/ws") {
+      dashboardWss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
+        dashboardWss.emit("connection", ws, request);
+      });
+    } else {
+      socket.destroy();
+    }
+  });
+
+  server.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code === "EADDRINUSE") {
+      throw new Error(
+        `[resource-wall server] Port ${port} is already in use. ` +
+          `Update API_PORT/VITE_API_PORT in your env config or stop the process using that port.`,
+      );
+    }
+
+    throw error;
+  });
 }
+
+class GatewayEventMonitor {
+  private ws: WebSocket | null = null;
+  private config: GatewayConfig;
+  private shouldReconnect = true;
+  private runRoles = new Map<string, string>();
+
+  constructor(config: GatewayConfig) {
+    this.config = config;
+  }
+
+  start() {
+    if (!this.shouldReconnect) return;
+    console.log(`[monitor] Connecting to ${this.config.wsUrl} (token length: ${this.config.token.length})...`);
+    this.ws = new WebSocket(this.config.wsUrl, {
+      headers: { Origin: this.config.httpUrl },
+    });
+
+    this.ws.on("message", (data: RawData) => {
+      const rawString = String(data);
+      const message = parseGatewayMessage(data);
+      if (!message) return;
+
+      if (message.type === "event") {
+        if (message.event === "connect.challenge") {
+          this.ws?.send(
+            JSON.stringify({
+              type: "req",
+              id: "connect",
+              method: "connect",
+              params: {
+                minProtocol: 3,
+                maxProtocol: 3,
+                client: {
+                  id: "openclaw-control-ui",
+                  version: "openclaw-character-dashboard-monitor",
+                  platform: "node",
+                  mode: "webchat",
+                  instanceId: "openclaw-character-dashboard-monitor",
+                },
+                role: "operator",
+                scopes: ["operator.read"],
+                caps: ["tool-events"],
+                auth: this.config.token ? { token: this.config.token } : {},
+                userAgent: "node-monitor",
+                locale: "en",
+              },
+            }),
+          );
+          return;
+        }
+
+        const raw = JSON.parse(rawString);
+        const payload = raw.payload;
+        if (!payload) return;
+
+        if (message.event === "chat") {
+          const runId = payload.runId || "unknown";
+          const messageData = payload.message || {};
+          
+          // Capture role if present, otherwise fallback to cached role for this run
+          let role = (typeof messageData.role === "string" ? messageData.role : "").toLowerCase();
+          if (role) {
+            this.runRoles.set(runId, role);
+          } else {
+            role = this.runRoles.get(runId) || "assistant";
+          }
+
+          const content = typeof messageData.content === "string" 
+            ? messageData.content 
+            : Array.isArray(messageData.content)
+              ? messageData.content.map((p: any) => p.text || "").join("")
+              : typeof messageData.text === "string"
+                ? messageData.text
+                : "";
+
+          if (content) {
+            console.log(`[AGENT MESSAGE] [${runId}] ${role.toUpperCase()}: ${content}`);
+            broadcastToDashboard({
+              type: "agent-message",
+              runId,
+              role,
+              content,
+              sessionKey: payload.sessionKey,
+              agentId: agentIdFromSessionKey(payload.sessionKey),
+            });
+          }
+
+          // Cleanup role cache on final/error states
+          if (payload.state === "final" || payload.state === "error" || payload.state === "aborted") {
+            this.runRoles.delete(runId);
+            broadcastToDashboard({
+              type: "agent-message-final",
+              runId,
+              state: payload.state,
+              agentId: agentIdFromSessionKey(payload.sessionKey),
+            });
+          }
+        } else if (message.event === "agent") {
+          const stream = payload.stream || "unknown";
+          const runId = payload.runId || "none";
+          if (payload.data && payload.data.chunk) {
+             console.log(`[AGENT STREAM] [${runId}] ${stream.toUpperCase()}: ${payload.data.chunk}`);
+             broadcastToDashboard({
+               type: "agent-stream",
+               runId,
+               stream,
+               chunk: payload.data.chunk,
+               agentId: agentIdFromSessionKey(payload.sessionKey),
+             });
+          } else if (payload.data && payload.data.phase) {
+             console.log(`[AGENT LIFECYCLE] [${runId}] PHASE: ${payload.data.phase}`);
+             broadcastToDashboard({
+               type: "agent-lifecycle",
+               runId,
+               phase: payload.data.phase,
+               agentId: agentIdFromSessionKey(payload.sessionKey),
+             });
+             if (payload.data.phase === "end" || payload.data.phase === "error") {
+               this.runRoles.delete(runId);
+             }
+          }
+        }
+      } else if (message.type === "res" && message.id === "connect") {
+        if (message.ok) {
+          console.log(`[monitor] Successfully connected to gateway`);
+        } else {
+          console.error(`[monitor] Gateway connect failed: ${message.error?.message}`);
+        }
+      }
+    });
+
+    this.ws.on("close", () => {
+      console.warn(`[monitor] WebSocket closed`);
+      this.ws = null;
+      if (this.shouldReconnect) {
+        console.log(`[monitor] Reconnecting in 5s...`);
+        setTimeout(() => this.start(), 5000);
+      }
+    });
+
+    this.ws.on("error", (err: Error) => {
+      console.error(`[monitor] WebSocket error: ${err.message}`);
+    });
+  }
+
+  stop() {
+    this.shouldReconnect = false;
+    this.ws?.close();
+  }
+}
+
 
 function loadServerEnv(): void {
   const envDir = process.cwd();
@@ -268,8 +490,9 @@ function resolveConfiguredPath(rawPath: string): string {
 }
 
 async function readGatewayConfig(): Promise<GatewayConfig> {
+  const gatewayHost = process.env["GATEWAY_HOST"] ?? "127.0.0.1";
+  const configPath = path.join(OPENCLAW_HOME, "openclaw.json");
   try {
-    const configPath = path.join(OPENCLAW_HOME, "openclaw.json");
     const raw = await fs.readFile(configPath, "utf8");
     const parsed = JSON.parse(raw) as {
       gateway?: { port?: number; auth?: { token?: string } };
@@ -277,15 +500,23 @@ async function readGatewayConfig(): Promise<GatewayConfig> {
     const port = parsed.gateway?.port ?? 18789;
     const token = parsed.gateway?.auth?.token ?? "";
 
+    if (token) {
+      console.log(`[gateway] Loaded auth token from ${configPath}`);
+    } else {
+      console.warn(`[gateway] No auth token found in ${configPath}`);
+    }
+
     return {
-      httpUrl: `http://127.0.0.1:${port}`,
-      wsUrl: `ws://127.0.0.1:${port}`,
+      httpUrl: `http://${gatewayHost}:${port}`,
+      wsUrl: `ws://${gatewayHost}:${port}`,
       token,
     };
-  } catch {
+  } catch (err) {
+    const port = 18789;
+    console.warn(`[gateway] Could not read config at ${configPath}, using defaults. Error: ${err instanceof Error ? err.message : String(err)}`);
     return {
-      httpUrl: "http://127.0.0.1:18789",
-      wsUrl: "ws://127.0.0.1:18789",
+      httpUrl: `http://${gatewayHost}:${port}`,
+      wsUrl: `ws://${gatewayHost}:${port}`,
       token: "",
     };
   }
@@ -295,6 +526,8 @@ async function fetchGatewaySnapshot(
   gatewayConfigPromise: GatewayConfig | Promise<GatewayConfig>,
 ): Promise<GatewaySnapshot> {
   const gatewayConfig = await gatewayConfigPromise;
+
+  console.log(`[gateway] Attempting connection to ${gatewayConfig.wsUrl}...`);
 
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(gatewayConfig.wsUrl, {
@@ -327,11 +560,14 @@ async function fetchGatewaySnapshot(
         ws.close();
       }
 
-      if (result.ok) {
-        resolve(result.value);
+      if (!result.ok) {
+        const error = (result as { error: Error }).error;
+        console.error(`[gateway] Connection failed: ${error.message}`);
+        rejectAllPending(error);
+        reject(error);
       } else {
-        rejectAllPending(result.error);
-        reject(result.error);
+        console.log(`[gateway] Successfully fetched snapshot from ${gatewayConfig.httpUrl}`);
+        resolve(result.value);
       }
     };
 
@@ -485,8 +721,8 @@ async function fetchGatewaySnapshot(
       }
     });
 
-    ws.on("error", () => {
-      finish({ ok: false, error: new Error("Gateway websocket error") });
+    ws.on("error", (err: Error) => {
+      finish({ ok: false, error: err });
     });
 
     ws.on("close", () => {
