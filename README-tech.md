@@ -55,6 +55,25 @@ Then start the dashboard:
 run.bat
 ```
 
+### Docker
+
+You can run the dashboard using Docker and Docker Compose. This is the easiest way to run the dashboard in a containerised environment.
+
+1. Build and start the container:
+
+```bash
+docker-compose up -d
+```
+
+2. By default, it will look for your OpenClaw data in `~/.openclaw`. You can customise the data paths and port using environment variables:
+
+```bash
+# Example with custom paths
+OPENCLAW_DATA_PATH=/path/to/.openclaw API_PORT=3000 docker-compose up -d
+```
+
+3. Open your browser at `http://localhost:3001` (or your custom port).
+
 ---
 
 ## Manual Quick Start
