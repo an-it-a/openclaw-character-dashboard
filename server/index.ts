@@ -175,7 +175,7 @@ function sanitiseRelPath(raw: unknown): string {
   if (typeof raw !== "string") return "";
   // Normalise and strip any traversal outside the root
   const normalised = path.normalize(raw).replace(/^(\.\.(\/|\\|$))+/, "");
-  return normalised;
+  return normalised === "." ? "" : normalised;
 }
 
 function startServer(port: number): void {

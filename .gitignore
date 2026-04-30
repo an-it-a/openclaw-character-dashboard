@@ -9,6 +9,7 @@ plan/
 spec/
 
 # Local environment overrides — copy .env.example → .env.local to customise
+.env
 .env.local
 .env.*.local
 
