@@ -8,6 +8,8 @@ import { lookup as mimeLookup } from "mime-types";
 import { WebSocket } from "ws";
 import type { RawData } from "ws";
 
+import { readWorkflowSnapshot } from "./workflow";
+
 type GatewayConfig = {
   httpUrl: string;
   wsUrl: string;
@@ -79,6 +81,23 @@ app.use(express.json());
 app.get("/api/openclaw/snapshot", async (_req, res): Promise<void> => {
   try {
     const payload = await fetchGatewaySnapshot(gatewayConfigPromise);
+    res.status(200).json(payload);
+  } catch (error) {
+    res.status(500).json({
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/openclaw/workflow
+// Optional workflow enrichment snapshot. This must never replace the gateway-
+// backed live route; missing/empty workflow data is a soft failure.
+// ---------------------------------------------------------------------------
+
+app.get("/api/openclaw/workflow", async (_req, res): Promise<void> => {
+  try {
+    const payload = await readWorkflowSnapshot(OPENCLAW_HOME);
     res.status(200).json(payload);
   } catch (error) {
     res.status(500).json({

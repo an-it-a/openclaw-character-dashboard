@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import type { WorkflowAgentState } from "@/store/worldStore";
+
 // ---------------------------------------------------------------------------
 // Character state types (mirrors spec.md exactly)
 // ---------------------------------------------------------------------------
@@ -26,6 +28,7 @@ export type CharacterState = {
   mainState: MainState;
   subState: SubState;
   currentRoomId: string;
+  workflow?: WorkflowAgentState;
 };
 
 // ---------------------------------------------------------------------------
@@ -69,7 +72,13 @@ export const useCharacterStore = create<CharacterStoreState>()((set, get) => ({
 
   setCharacterState: (state) =>
     set((prev) => ({
-      characterStates: { ...prev.characterStates, [state.characterId]: state },
+      characterStates: {
+        ...prev.characterStates,
+        [state.characterId]: {
+          ...prev.characterStates[state.characterId],
+          ...state,
+        },
+      },
     })),
 
   claimPoint: (pointKey, characterId) => {

@@ -14,6 +14,7 @@ import { MockDataSource } from "@/data/mock";
 import type { DataSource } from "@/data/mock";
 import type { MainState, SubState } from "@/store/characterStore";
 import type { WorldConfig, WorldObject } from "@/types/world";
+import type { WorkflowAgentState, WorkflowDebugState } from "@/store/worldStore";
 
 const SOFA_HANDOFF_DELAY_MS = 3_000;
 
@@ -263,6 +264,7 @@ export class WorldScene extends Phaser.Scene {
     };
 
     if (isMockMode) {
+      useWorldStore.getState().setWorkflowState({}, { available: false, empty: false });
       const mock = new MockDataSource(agentIds);
       mock.on("stateChange", handleStateChange);
       mock.start();
@@ -270,12 +272,38 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const live = new LiveDataSource(agentIds, (status: LiveDataStatus) => {
-      useWorldStore.getState().setLiveDataStatus(status);
-    });
+    const live = new LiveDataSource(
+      agentIds,
+      (status: LiveDataStatus) => {
+        useWorldStore.getState().setLiveDataStatus(status);
+      },
+      ({ workflowByAgentId, workflowDebug }) => {
+        this.syncWorkflowState(workflowByAgentId, workflowDebug);
+      },
+    );
     live.on("stateChange", handleStateChange);
     live.start();
     this.dataSource = live;
+  }
+
+  private syncWorkflowState(
+    workflowByAgentId: Record<string, WorkflowAgentState>,
+    workflowDebug: WorkflowDebugState,
+  ): void {
+    useWorldStore.getState().setWorkflowState(workflowByAgentId, workflowDebug);
+
+    for (const char of this.config.characters) {
+      const workflow = workflowByAgentId[char.agentId];
+      const current = useCharacterStore.getState().characterStates[char.id];
+      if (!current) {
+        continue;
+      }
+
+      useCharacterStore.getState().setCharacterState({
+        ...current,
+        workflow,
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------

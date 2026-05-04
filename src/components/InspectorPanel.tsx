@@ -12,6 +12,7 @@ import "./InspectorPanel.css";
 export function InspectorPanel(): JSX.Element {
   const selection = useWorldStore((s) => s.inspectorSelection);
   const worldConfig = useWorldStore((s) => s.worldConfig);
+  const workflowDebug = useWorldStore((s) => s.workflowDebug);
   const characterStates = useCharacterStore((s) => s.characterStates);
 
   if (!selection) {
@@ -54,6 +55,22 @@ export function InspectorPanel(): JSX.Element {
               charConfig?.privateRoomId ??
               "—"}
           </dd>
+          <dt>Workflow available</dt>
+          <dd>{charState?.workflow?.available ? "Yes" : "No"}</dd>
+          <dt>Workflow state</dt>
+          <dd>{charState?.workflow?.displayState ?? "—"}</dd>
+          <dt>Foreground task</dt>
+          <dd>{charState?.workflow?.foregroundTask?.title ?? "—"}</dd>
+          <dt>Task kind</dt>
+          <dd>{charState?.workflow?.taskKind ?? "—"}</dd>
+          <dt>Task state</dt>
+          <dd>{charState?.workflow?.taskState ?? "—"}</dd>
+          <dt>Wait reason</dt>
+          <dd>{charState?.workflow?.waitReason ?? "—"}</dd>
+          <dt>Task source</dt>
+          <dd>{charState?.workflow?.resolution?.taskSource ?? "—"}</dd>
+          <dt>Presence freshness</dt>
+          <dd>{charState?.workflow?.presenceFreshness ?? "—"}</dd>
         </dl>
       </aside>
     );
@@ -95,6 +112,16 @@ export function InspectorPanel(): JSX.Element {
         <p className="inspector-panel__hint">
           Shared files browser — click the resource wall on the map to open.
         </p>
+        <dl className="inspector-panel__details">
+          <dt>Workflow enrichment</dt>
+          <dd>{workflowDebug.available ? "Available" : "Unavailable"}</dd>
+          <dt>Workflow status</dt>
+          <dd>
+            {workflowDebug.empty
+              ? "Empty"
+              : workflowDebug.reason ?? workflowDebug.lastError ?? "—"}
+          </dd>
+        </dl>
       </aside>
     );
   }
