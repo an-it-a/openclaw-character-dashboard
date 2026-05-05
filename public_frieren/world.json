@@ -1,5 +1,5 @@
 {
-  "canvasWidth": 920,
+  "canvasWidth": 1112,
   "canvasHeight": 760,
   "rooms": [
     {
@@ -344,7 +344,7 @@
       "label": "Corridor",
       "x": 320,
       "y": 480,
-      "width": 576,
+      "width": 768,
       "height": 64,
       "objects": [
         {
@@ -431,6 +431,36 @@
           "y": 480,
           "width": 64,
           "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-aura-left",
+          "type": "wall",
+          "asset": "",
+          "x": 896,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-aura-right",
+          "type": "wall",
+          "asset": "",
+          "x": 1024,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "corridor-end-wall",
+          "type": "wall",
+          "asset": "",
+          "x": 1087,
+          "y": 480,
+          "width": 1,
+          "height": 64,
           "blocksPath": true
         }
       ]
@@ -916,6 +946,94 @@
           "blocksPath": true
         }
       ]
+    },
+    {
+      "id": "private-aura",
+      "label": "Aura's Room",
+      "x": 896,
+      "y": 288,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-aura-floor",
+          "type": "floor",
+          "asset": "images/map/characters/aura/room/floor.png",
+          "x": 896,
+          "y": 352,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-aura-wall",
+          "type": "wall",
+          "asset": "images/map/characters/aura/room/wall.png",
+          "x": 896,
+          "y": 288,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-aura-door",
+          "type": "door",
+          "asset": "images/map/rooms/room-door.png",
+          "x": 960,
+          "y": 416,
+          "width": 64,
+          "height": 65,
+          "blocksPath": false
+        },
+        {
+          "id": "private-aura-decor-1",
+          "type": "floor-decor",
+          "asset": "images/map/characters/aura/object/decor1.png",
+          "x": 1024,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "bed-aura",
+          "type": "furniture",
+          "asset": "images/map/characters/aura/object/bed.png",
+          "x": 1024,
+          "y": 384,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "side-wall-top-3",
+          "type": "wall",
+          "asset": "",
+          "x": 896,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-top-4",
+          "type": "wall",
+          "asset": "",
+          "x": 1087,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
     }
   ],
   "characters": [
@@ -987,6 +1105,18 @@
       "spriteSheet": {
         "inside": "images/map/characters/heiter/inside.png",
         "outside": "images/map/characters/heiter/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "aura",
+      "agentId": "aura-agent",
+      "name": "Aura",
+      "privateRoomId": "private-aura",
+      "spriteSheet": {
+        "inside": "images/map/characters/aura/inside.png",
+        "outside": "images/map/characters/aura/outside.png",
         "frameWidth": 64,
         "frameHeight": 64
       }

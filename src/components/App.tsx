@@ -49,15 +49,18 @@ export function App(): JSX.Element {
   }
 
   return (
-    <div className="app-layout">
-      <div className="app-canvas-area">
-        <PhaserGame />
+    <div className="app-container">
+      <div className="top-banner">HKIIT 雲端系統及數據中心管理高級文憑</div>
+      <div className="app-layout">
+        <div className="app-canvas-area">
+          <PhaserGame />
+        </div>
+        <div className="app-sidebar">
+          <MockModeToggle />
+          <InspectorPanel />
+        </div>
+        <ResourceWallOverlay />
       </div>
-      <div className="app-sidebar">
-        <MockModeToggle />
-        <InspectorPanel />
-      </div>
-      <ResourceWallOverlay />
     </div>
   );
 }

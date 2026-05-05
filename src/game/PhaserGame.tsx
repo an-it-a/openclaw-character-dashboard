@@ -55,11 +55,7 @@ export function PhaserGame(): JSX.Element {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-    // Intentionally no deps: Phaser game is created exactly once on mount.
-    // canvasWidth/canvasHeight are stable at this point because App.tsx
-    // ensures worldConfig is loaded before rendering PhaserGame.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [canvasWidth, canvasHeight]);
 
   return (
     <div

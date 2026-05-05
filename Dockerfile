@@ -1,5 +1,5 @@
-# Stage 1: Build
-FROM node:22-slim AS build
+# Stage 1: Base/Dev
+FROM node:22-slim AS base
 
 WORKDIR /app
 
@@ -10,16 +10,21 @@ RUN npm install
 # Copy source code
 COPY . .
 
+# Expose the API and Vite ports
+EXPOSE 3001 5173
+
+# Stage 2: Build
+FROM base AS build
+
 # Build the frontend
 RUN npm run build
 
 # Build the server
-# We compile server/index.ts into dist-server/index.js
 RUN echo '{"compilerOptions": {"target": "esnext", "module": "esnext", "moduleResolution": "node", "outDir": "./dist-server", "skipLibCheck": true, "allowSyntheticDefaultImports": true, "rootDir": "./server"}, "include": ["server/**/*"]}' > tsconfig.server.json
 RUN npx tsc -p tsconfig.server.json
 
-# Stage 2: Runtime
-FROM node:22-slim
+# Stage 3: Runtime
+FROM node:22-slim AS runtime
 
 WORKDIR /app
 
