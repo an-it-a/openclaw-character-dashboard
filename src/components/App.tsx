@@ -21,6 +21,8 @@ export function App(): JSX.Element {
   const setWorldConfig = useWorldStore((s) => s.setWorldConfig);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  console.log("[App] VITE_BANNER_TEXT:", import.meta.env.VITE_BANNER_TEXT);
+
   useEffect(() => {
     if (worldConfig !== null) return; // already loaded (e.g. HMR)
 
@@ -50,7 +52,9 @@ export function App(): JSX.Element {
 
   return (
     <div className="app-container">
-      <div className="top-banner">HKIIT 雲端系統及數據中心管理高級文憑</div>
+      <div className="top-banner">
+        {import.meta.env.VITE_BANNER_TEXT ?? "OpenClaw Dashboard"}
+      </div>
       <div className="app-layout">
         <div className="app-canvas-area">
           <PhaserGame />

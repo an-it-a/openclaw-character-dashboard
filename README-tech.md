@@ -72,7 +72,9 @@ docker-compose up -d
 OPENCLAW_DATA_PATH=/path/to/.openclaw API_PORT=3000 docker-compose up -d
 ```
 
-3. Open your browser at `http://localhost:3001` (or your custom port).
+3. Open your browser at:
+   - **Development UI:** `http://localhost:5173` (Recommended for live changes)
+   - **Production UI/API:** `http://localhost:3001` (Only works if you've run `npm run build`)
 
 ---
 
@@ -148,6 +150,7 @@ These settings control the project runtime:
 | `VITE_PUBLIC_DIR`                  | Asset pack/public root that contains `world.json` and all map assets.                                  |
 | `SHARED_ROOT`                      | Resource wall browsing root. Defaults to `<OPENCLAW_HOME>/shared`.                                     |
 | `VITE_SESSION_ACTIVE_THRESHOLD_MS` | How long recent user-facing activity keeps an agent in `working`.                                      |
+| `VITE_BANNER_TEXT`                 | Text displayed in the top banner of the dashboard.                                                     |
 
 ## Map Your Agents To Characters
 
@@ -211,8 +214,9 @@ Expected asset layout:
 
 Important details:
 
-- sprite sheets use `48x64` frames
+- sprite sheets use `48x64` or `64x64` frames
 - `world.json` is the source of truth for map layout and character config
+- changing `canvasWidth` or `canvasHeight` in `world.json` will automatically resize the dashboard UI
 - no source code change is required to swap character art or room art if your asset paths and `world.json` are correct
 
 ## Live State Behavior

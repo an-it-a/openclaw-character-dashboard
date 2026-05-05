@@ -352,7 +352,7 @@
           "type": "floor",
           "x": 320,
           "y": 480,
-          "width": 576,
+          "width": 768,
           "height": 64,
           "blocksPath": false,
           "tiles": {

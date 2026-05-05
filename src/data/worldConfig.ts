@@ -215,7 +215,7 @@ export async function loadWorldConfig(): Promise<WorldConfig> {
   let raw: unknown;
 
   try {
-    const response = await fetch("/world.json");
+    const response = await fetch(`/world.json?t=${Date.now()}`);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status} ${response.statusText}`);
     }
