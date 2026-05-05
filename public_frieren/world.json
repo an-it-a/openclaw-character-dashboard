@@ -1051,7 +1051,7 @@
     },
     {
       "id": "fern",
-      "agentId": "social-media-post-writer",
+      "agentId": "robot_5",
       "name": "Fern",
       "privateRoomId": "private-fern",
       "spriteSheet": {
@@ -1063,7 +1063,7 @@
     },
     {
       "id": "himmel",
-      "agentId": "youtube-script-writer",
+      "agentId": "robot_1",
       "name": "Himmel",
       "privateRoomId": "private-himmel",
       "spriteSheet": {
@@ -1075,7 +1075,7 @@
     },
     {
       "id": "stark",
-      "agentId": "news-crawler",
+      "agentId": "robot_2",
       "name": "Stark",
       "privateRoomId": "private-stark",
       "spriteSheet": {
@@ -1087,7 +1087,7 @@
     },
     {
       "id": "eisen",
-      "agentId": "seo-expert",
+      "agentId": "robot_3",
       "name": "Eisen",
       "privateRoomId": "private-eisen",
       "spriteSheet": {
@@ -1099,7 +1099,7 @@
     },
     {
       "id": "heiter",
-      "agentId": "researcher",
+      "agentId": "robot_4",
       "name": "Heiter",
       "privateRoomId": "private-heiter",
       "spriteSheet": {
@@ -1111,7 +1111,7 @@
     },
     {
       "id": "aura",
-      "agentId": "aura-agent",
+      "agentId": "robot_6",
       "name": "Aura",
       "privateRoomId": "private-aura",
       "spriteSheet": {
