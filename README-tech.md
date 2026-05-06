@@ -57,24 +57,33 @@ run.bat
 
 ### Docker
 
-You can run the dashboard using Docker and Docker Compose. This is the easiest way to run the dashboard in a containerised environment.
+You can run the dashboard using Docker. We provide a helper script to ensure a fresh build and clean execution.
 
-1. Build and start the container:
-
-```bash
-docker-compose up -d
-```
-
-2. By default, it will look for your OpenClaw data in `~/.openclaw`. You can customise the data paths and port using environment variables:
+1. Run the helper script:
 
 ```bash
-# Example with custom paths
-OPENCLAW_DATA_PATH=/path/to/.openclaw API_PORT=3000 docker-compose up -d
+./docker-run.sh
 ```
 
-3. Open your browser at:
-   - **Development UI:** `http://localhost:5173` (Recommended for live changes)
-   - **Production UI/API:** `http://localhost:3001` (Only works if you've run `npm run build`)
+This script will:
+- Run `npm run build` to generate a fresh `dist` folder.
+- Clean up any old containers.
+- Start the dashboard in the **foreground** so you can see the logs.
+- Automatically serve the updated dashboard on port **3001**.
+
+2. To stop the dashboard, press `Ctrl+C` in the terminal.
+
+3. By default, it looks for OpenClaw data in `~/.openclaw`. Customise via `.env`:
+
+```bash
+# Edit .env to set your paths
+OPENCLAW_DATA_PATH=/path/to/.openclaw
+SHARED_DATA_PATH=/path/to/shared
+```
+
+4. Open your browser at:
+   - **Production UI:** `http://localhost:3001` (Recommended)
+   - **Development UI:** `http://localhost:5173` (Live reload)
 
 ---
 

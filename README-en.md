@@ -101,6 +101,12 @@ After the installer finishes, it creates a `run` script for you.
 ./run.sh
 ```
 
+**Using Docker:**
+
+```bash
+./docker-run.sh
+```
+
 ### Windows — PowerShell
 
 ```powershell
@@ -115,8 +121,8 @@ run.bat
 
 Then open your browser and go to:
 
-- **Development (Recommended):** `http://localhost:5173`
-- **Production/API:** `http://localhost:3001` (Requires running `npm run build` first)
+- **Production UI (Recommended):** `http://localhost:3001`
+- **Development UI (Live Reload):** `http://localhost:5173`
 
 The dashboard will load and your agents will appear as animated characters on the map.
 

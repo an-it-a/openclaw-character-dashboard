@@ -948,6 +948,46 @@
       ]
     },
     {
+      "id": "it114115-logo-room",
+      "label": "HD in Cloud and Data Centre Administration",
+      "x": 896,
+      "y": 0,
+      "width": 192,
+      "height": 288,
+      "objects": [
+        {
+          "id": "it114115-logo",
+          "type": "object",
+          "asset": "images/map/rooms/it114115_logo.png",
+          "x": 896,
+          "y": 48,
+          "width": 192,
+          "height": 192,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-top-5",
+          "type": "wall",
+          "asset": "",
+          "x": 896,
+          "y": 0,
+          "width": 1,
+          "height": 288,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-top-6",
+          "type": "wall",
+          "asset": "",
+          "x": 1087,
+          "y": 0,
+          "width": 1,
+          "height": 288,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
       "id": "private-aura",
       "label": "Aura's Room",
       "x": 896,
@@ -1029,6 +1069,46 @@
           "asset": "",
           "x": 1087,
           "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "hkiit-logo-room",
+      "label": "HKIIT",
+      "x": 896,
+      "y": 544,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "hkiit-logo",
+          "type": "object",
+          "asset": "images/map/rooms/hkiit_logo.png",
+          "x": 896,
+          "y": 544,
+          "width": 192,
+          "height": 192,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-bot-3",
+          "type": "wall",
+          "asset": "",
+          "x": 896,
+          "y": 544,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-bot-4",
+          "type": "wall",
+          "asset": "",
+          "x": 1087,
+          "y": 544,
           "width": 1,
           "height": 192,
           "blocksPath": true

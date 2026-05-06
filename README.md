@@ -101,6 +101,12 @@ install.bat
 ./run.sh
 ```
 
+**使用 Docker：**
+
+```bash
+./docker-run.sh
+```
+
 ### Windows — PowerShell
 
 ```powershell
@@ -115,8 +121,8 @@ run.bat
 
 啟動後，開啟瀏覽器，前往：
 
-- **開發偵錯 (推薦)：** `http://localhost:5173`
-- **正式環境 (API)：** `http://localhost:3001` (需先執行過 `npm run build`)
+- **正式環境 (推薦)：** `http://localhost:3001`
+- **開發偵錯 (Live Reload)：** `http://localhost:5173`
 
 看板頁面會載入，你的智能體角色會出現在地圖上。
 
