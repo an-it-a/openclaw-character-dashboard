@@ -15,6 +15,7 @@
   background: #0f0f1a;
   color: #d0d0e0;
   font-family: inherit;
+  min-height: 0;
 }
 
 /* ---------------------------------------------------------------------------
@@ -108,6 +109,7 @@
   padding: 0;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 
 .file-preview-md__toolbar {
@@ -143,18 +145,17 @@
   color: #fff;
 }
 
-.file-preview--markdown > :not(.file-preview-md__toolbar) {
+.file-preview-md__content {
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
   overflow: auto;
   flex: 1;
+  min-height: 0;
 }
 
 .file-preview-md__raw {
   margin: 0;
-  flex: 1;
-  width: 100%;
   border-radius: 0;
 }
 
@@ -289,6 +290,126 @@
 }
 
 /* ---------------------------------------------------------------------------
+   JSON preview
+   --------------------------------------------------------------------------- */
+
+.file-preview--json {
+  align-items: flex-start;
+  padding: 0;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Fira Code", "Cascadia Code", "JetBrains Mono", monospace;
+}
+
+.file-preview-json__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 14px;
+  box-sizing: border-box;
+  background: #16162a;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+.file-preview-json__toggle {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: #2a2a4a;
+  color: #c8bfff;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.file-preview-json__toggle:hover {
+  background: #3a3a5a;
+}
+
+.file-preview-json__toggle--active {
+  background: #3a3a6a;
+  color: #fff;
+}
+
+.file-preview-json__content {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 16px 18px;
+}
+
+.file-preview-json__raw {
+  flex: 1;
+  min-height: 0;
+}
+
+.file-preview-json__node {
+  width: 100%;
+}
+
+.file-preview-json__line {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.65;
+  min-height: 22px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.file-preview-json__caret,
+.file-preview-json__spacer {
+  width: 18px;
+  flex: 0 0 18px;
+}
+
+.file-preview-json__caret {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #9aa2ff;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.file-preview-json__caret:hover {
+  color: #c8bfff;
+}
+
+.file-preview-json__key {
+  color: #7eb8f7;
+}
+
+.file-preview-json__string {
+  color: #a5d6a7;
+}
+
+.file-preview-json__number {
+  color: #f6c177;
+}
+
+.file-preview-json__boolean {
+  color: #c792ea;
+}
+
+.file-preview-json__null {
+  color: #f28fad;
+}
+
+.file-preview-json__punct {
+  color: #9aa2c0;
+}
+
+.file-preview-json__summary {
+  color: #6b728f;
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
    CSV / TSV preview
    --------------------------------------------------------------------------- */
 
@@ -346,6 +467,7 @@
   font-family: "Fira Code", "Cascadia Code", "JetBrains Mono", monospace;
   width: max-content;
   min-width: 100%;
+  table-layout: fixed;
 }
 
 .file-preview-csv__table thead {
@@ -355,6 +477,7 @@
 }
 
 .file-preview-csv__table th {
+  position: relative;
   background: #1e1e2e;
   color: #c8bfff;
   font-weight: 600;
@@ -376,6 +499,43 @@
   overflow: hidden;
   text-overflow: ellipsis;
   background: transparent;
+}
+
+.file-preview-csv__row-num-col {
+  width: 32px;
+}
+
+.file-preview-csv__resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 2;
+}
+
+.file-preview-csv__resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 3px;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 0.12s;
+}
+
+.file-preview-csv__table th:hover .file-preview-csv__resize-handle::after,
+.file-preview-csv__resize-handle:hover::after,
+body.file-preview-csv--resizing .file-preview-csv__resize-handle::after {
+  background: #6c7cff;
+}
+
+body.file-preview-csv--resizing {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .file-preview-csv__table tbody tr:nth-child(even) td {
