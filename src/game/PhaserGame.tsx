@@ -47,6 +47,10 @@ export function PhaserGame(): JSX.Element {
       height: canvasHeight,
       backgroundColor: "#1a1a2e",
       scene: [BootScene, PreloadScene, WorldScene],
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
       banner: false,
       parent: containerRef.current,
     });
@@ -62,8 +66,11 @@ export function PhaserGame(): JSX.Element {
       ref={containerRef}
       className="phaser-container"
       style={{
-        width: canvasWidth,
-        height: canvasHeight,
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         ...(overlayOpen ? { pointerEvents: "none" } : {}),
       }}
     />

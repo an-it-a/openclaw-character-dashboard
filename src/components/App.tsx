@@ -16,10 +16,20 @@ import "./App.css";
  * are available in Zustand when PhaserGame initialises its Phaser.Game instance.
  * BootScene detects the pre-loaded config and skips its own fetch.
  */
+export type ViewMode = "game-only" | "split" | "panel-only";
+
+/**
+ * App
+ *
+ * Loads world.json before mounting the Phaser game so that canvas dimensions
+ * are available in Zustand when PhaserGame initialises its Phaser.Game instance.
+ * BootScene detects the pre-loaded config and skips its own fetch.
+ */
 export function App(): JSX.Element {
   const worldConfig = useWorldStore((s) => s.worldConfig);
   const setWorldConfig = useWorldStore((s) => s.setWorldConfig);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("split");
 
   console.log("[App] VITE_BANNER_TEXT:", import.meta.env.VITE_BANNER_TEXT);
 
@@ -51,9 +61,34 @@ export function App(): JSX.Element {
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container view-mode-${viewMode}`}>
       <div className="top-banner">
-        {import.meta.env.VITE_BANNER_TEXT ?? "OpenClaw Dashboard"}
+        <div className="banner-content">
+          {import.meta.env.VITE_BANNER_TEXT ?? "OpenClaw Dashboard"}
+        </div>
+        <div className="view-controls">
+          <button
+            className={`view-toggle ${viewMode === "game-only" ? "active" : ""}`}
+            onClick={() => setViewMode("game-only")}
+            title="Game Only"
+          >
+            🎮
+          </button>
+          <button
+            className={`view-toggle ${viewMode === "split" ? "active" : ""}`}
+            onClick={() => setViewMode("split")}
+            title="Split View"
+          >
+            🌓
+          </button>
+          <button
+            className={`view-toggle ${viewMode === "panel-only" ? "active" : ""}`}
+            onClick={() => setViewMode("panel-only")}
+            title="Panel Only"
+          >
+            📋
+          </button>
+        </div>
       </div>
       <div className="app-layout">
         <div className="app-canvas-area">
