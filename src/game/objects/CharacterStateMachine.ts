@@ -31,6 +31,8 @@ export type StateMachineCallbacks = {
   ) => void;
   /** Get a random walkable pixel in the given room. */
   randomWalkableInRoom: (roomId: string) => { x: number; y: number } | null;
+  /** Get a standing point in the given room that avoids stacked idle characters when possible. */
+  randomStandingSpotInRoom: (roomId: string) => { x: number; y: number } | null;
   /** Get a free interaction point for the given object id. Returns null if all occupied. */
   claimInteractionPoint: (
     objectId: string,
@@ -467,7 +469,7 @@ export class CharacterStateMachine {
       const destination =
         Math.random() < 0.5 ? this.config.privateRoomId : livingId;
 
-      const target = this.callbacks.randomWalkableInRoom(destination);
+      const target = this.callbacks.randomStandingSpotInRoom(destination);
       if (!target) {
         this.subState = "standing";
         this.holdTimer = this.randomHoldMs();
@@ -499,7 +501,7 @@ export class CharacterStateMachine {
     const isInPrivate = this.currentRoomId === this.config.privateRoomId;
     const destination = isInPrivate ? "living" : this.config.privateRoomId;
 
-    const dest = this.callbacks.randomWalkableInRoom(destination);
+    const dest = this.callbacks.randomStandingSpotInRoom(destination);
     if (!dest) {
       this.enterIdleStanding();
       return;
