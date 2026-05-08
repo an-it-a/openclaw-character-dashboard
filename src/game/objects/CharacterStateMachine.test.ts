@@ -21,6 +21,7 @@ function makeCallbacks(
     stopMovement: vi.fn(),
     onStateChanged: vi.fn(),
     randomWalkableInRoom: vi.fn(() => ({ x: 100, y: 100 })),
+    randomStandingSpotInRoom: vi.fn(() => ({ x: 100, y: 100 })),
     claimInteractionPoint: vi.fn(() => ({
       finalPx: { x: 50, y: 50 },
       routePx: { x: 50, y: 50 },
@@ -204,6 +205,40 @@ describe("CharacterStateMachine", () => {
     expect(sm.getSubState()).toBe("standing");
     // Must NOT be in the office any more
     expect(sm.getCurrentRoomId()).not.toBe("office");
+  });
+
+  it("uses standing spot selection when walking away from work", () => {
+    const arrival = { fn: null as (() => void) | null };
+    const deferredCallbacks = makeCallbacks({
+      moveTo: vi.fn((_routePx, _finalPx, _speed, onArrived: () => void) => {
+        arrival.fn = onArrived;
+      }),
+    });
+    const sm = new CharacterStateMachine(config, deferredCallbacks);
+
+    sm.setExternalState("working");
+    arrival.fn?.();
+    sm.tick(361_000);
+
+    expect(deferredCallbacks.randomStandingSpotInRoom).toHaveBeenCalled();
+  });
+
+  it("uses standing spot selection when changing rooms", () => {
+    const standingSpot = { x: 144, y: 208 };
+    const changeRoomCallbacks = makeCallbacks({
+      randomStandingSpotInRoom: vi.fn(() => standingSpot),
+    });
+    const sm = new CharacterStateMachine(config, changeRoomCallbacks);
+
+    sm.forceState("idle", "change-room");
+
+    expect(changeRoomCallbacks.randomStandingSpotInRoom).toHaveBeenCalled();
+    expect(changeRoomCallbacks.moveTo).toHaveBeenCalledWith(
+      standingSpot,
+      standingSpot,
+      "normal",
+      expect.any(Function),
+    );
   });
 
   it("when external idle arrives while working, character walks away from office", () => {
