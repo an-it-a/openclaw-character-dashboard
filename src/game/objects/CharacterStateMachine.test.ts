@@ -259,6 +259,64 @@ describe("CharacterStateMachine", () => {
     expect(sm.getMainState()).toBe("idle");
   });
 
+  it("walks away from sofa before becoming standing (no immediate snap)", () => {
+    // Use deferred moveTo so we can observe sub-states mid-transition.
+    const arrivals: Array<() => void> = [];
+    const deferredCallbacks = makeCallbacks({
+      moveTo: vi.fn((_routePx, _finalPx, _speed, onArrived: () => void) => {
+        arrivals.push(onArrived);
+      }),
+    });
+    const sm = new CharacterStateMachine(config, deferredCallbacks);
+
+    // Get the character seated on the sofa.
+    sm.forceState("idle", "sitting-on-sofa");
+    // arrivals[0] is the walk-to-sofa moveTo; call it to complete seating.
+    arrivals[0]?.();
+    expect(sm.getSubState()).toBe("sitting-on-sofa");
+
+    // Patch Math.random so pickNextSubState always picks "standing".
+    const origRandom = Math.random;
+    Math.random = vi.fn(() => 0); // index 0 → "standing"
+    try {
+      sm.tick(361_000); // expire the hold timer
+    } finally {
+      Math.random = origRandom;
+    }
+
+    // The character must NOT immediately be "standing" — a walk is in progress.
+    expect(sm.getSubState()).not.toBe("standing");
+    // A moveTo was issued for the walk-away (arrivals[1]).
+    expect(arrivals.length).toBeGreaterThanOrEqual(2);
+
+    // Resolve the walk-away.
+    arrivals[arrivals.length - 1]?.();
+    expect(sm.getSubState()).toBe("standing");
+  });
+
+  it("ends in standing after sofa walk-away completes", () => {
+    const sm = new CharacterStateMachine(config, callbacks);
+
+    sm.forceState("idle", "sitting-on-sofa");
+    // callbacks.moveTo immediately calls onArrived, so character is already seated.
+    expect(sm.getSubState()).toBe("sitting-on-sofa");
+
+    const origRandom = Math.random;
+    Math.random = vi.fn(() => 0); // always "standing"
+    try {
+      sm.tick(361_000);
+    } finally {
+      Math.random = origRandom;
+    }
+
+    // Immediate-arrival moveTo means walk-away completed synchronously.
+    expect(sm.getSubState()).toBe("standing");
+    // exitFurnitureIfNeeded must have been called.
+    expect(callbacks.exitFurnitureIfNeeded).toHaveBeenCalled();
+    // A walk-away moveTo must have been issued.
+    expect(callbacks.moveTo).toHaveBeenCalled();
+  });
+
   it("does not call moveTo while already in a non-stable transition", () => {
     const deferredMove = vi.fn(); // never calls onArrived
     const deferredCallbacks = makeCallbacks({ moveTo: deferredMove });
