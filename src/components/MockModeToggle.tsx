@@ -20,6 +20,7 @@ export function MockModeToggle(): JSX.Element {
   const isMockMode = useWorldStore((s) => s.isMockMode);
   const setMockMode = useWorldStore((s) => s.setMockMode);
   const liveDataStatus = useWorldStore((s) => s.liveDataStatus);
+  const liveDataError = useWorldStore((s) => s.liveDataError);
 
   return (
     <>
@@ -51,6 +52,9 @@ export function MockModeToggle(): JSX.Element {
             )}
           </button>
         </div>
+        {!isMockMode && liveDataStatus === "error" && liveDataError && (
+          <p className="data-source-toggle__error">{liveDataError}</p>
+        )}
       </div>
       {isMockMode && <MockStateController />}
     </>

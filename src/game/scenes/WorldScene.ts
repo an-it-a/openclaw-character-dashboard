@@ -7,7 +7,7 @@ import type { StateMachineCallbacks } from "@/game/objects/CharacterStateMachine
 import { CollisionGrid, GRID_CELL } from "@/game/pathfinding/CollisionGrid";
 import { PathFinder } from "@/game/pathfinding/PathFinder";
 import { hasStandingColumnConflict } from "@/game/utils/standingSpot";
-import { LiveDataSource } from "@/data/live";
+import { HermesLiveDataSource } from "@/data/hermesStatus";
 import { useWorldStore } from "@/store/worldStore";
 import type { LiveDataStatus } from "@/store/worldStore";
 import { useCharacterStore } from "@/store/characterStore";
@@ -271,9 +271,12 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const live = new LiveDataSource(agentIds, (status: LiveDataStatus) => {
-      useWorldStore.getState().setLiveDataStatus(status);
-    });
+    const live = new HermesLiveDataSource(
+      agentIds,
+      (status: LiveDataStatus, errorMessage?: string) => {
+        useWorldStore.getState().setLiveDataStatus(status, errorMessage ?? null);
+      },
+    );
     live.on("stateChange", handleStateChange);
     live.start();
     this.dataSource = live;

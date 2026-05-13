@@ -8,6 +8,11 @@ import { lookup as mimeLookup } from "mime-types";
 import { WebSocket } from "ws";
 import type { RawData } from "ws";
 
+import {
+  fetchHermesAgentsStatus,
+  fetchHermesSessionToken,
+} from "./hermesStatus.ts";
+
 type GatewayConfig = {
   httpUrl: string;
   wsUrl: string;
@@ -65,6 +70,12 @@ const OPENCLAW_HOME = process.env["OPENCLAW_HOME"]
 const SHARED_ROOT = process.env["SHARED_ROOT"]
   ? resolveConfiguredPath(process.env["SHARED_ROOT"])
   : path.join(OPENCLAW_HOME, "shared");
+const HERMES_DASHBOARD_URL =
+  process.env["HERMES_DASHBOARD_URL"] ?? "http://127.0.0.1:9119";
+const HERMES_SESSION_TOKEN = process.env["HERMES_SESSION_TOKEN"] ?? "";
+const HERMES_ACTIVE_WINDOW_MS = Number(
+  process.env["HERMES_ACTIVE_WINDOW_MS"] ?? 10_000,
+);
 
 const gatewayConfigPromise = readGatewayConfig();
 
@@ -79,6 +90,27 @@ app.use(express.json());
 app.get("/api/openclaw/snapshot", async (_req, res): Promise<void> => {
   try {
     const payload = await fetchGatewaySnapshot(gatewayConfigPromise);
+    res.status(200).json(payload);
+  } catch (error) {
+    res.status(500).json({
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/hermes/agents/status
+// Aggregates Hermes profile status using /api/profiles + each profile's state.db
+// ---------------------------------------------------------------------------
+
+app.get("/api/hermes/agents/status", async (_req, res): Promise<void> => {
+  try {
+    const token = HERMES_SESSION_TOKEN || (await fetchHermesSessionToken(HERMES_DASHBOARD_URL));
+    const payload = await fetchHermesAgentsStatus(
+      HERMES_DASHBOARD_URL,
+      token,
+      HERMES_ACTIVE_WINDOW_MS,
+    );
     res.status(200).json(payload);
   } catch (error) {
     res.status(500).json({

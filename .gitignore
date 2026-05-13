@@ -12,6 +12,7 @@ spec/
 .env
 .env.local
 .env.*.local
+run.sh
 
 # Editor / OS
 .DS_Store
