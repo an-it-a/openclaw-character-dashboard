@@ -296,6 +296,10 @@ export class CharacterStateMachine {
     this.callbacks.stopMovement();
 
     if (this.claimedPoint) {
+      // Capture before the async callback clears claimedPoint so we know
+      // whether a walk-away is required after exiting the furniture pose.
+      const wasOnSofa = this.subState === "sitting-on-sofa";
+
       // Use a non-stable transitional subState so that any mock "working"
       // signal arriving during the exit tween is queued as pendingMainState
       // rather than immediately re-triggering enterWalkingToWork. Without
@@ -306,6 +310,25 @@ export class CharacterStateMachine {
       this.notifyStateChanged();
       this.callbacks.exitFurnitureIfNeeded("fastest", () => {
         this.releaseCurrentPoint();
+
+        if (wasOnSofa) {
+          // Walk to a random spot in the room before stopping so the character
+          // never stands frozen directly in front of the sofa.
+          const target = this.callbacks.randomStandingSpotInRoom(
+            this.currentRoomId,
+          );
+          if (target) {
+            this.subState = "walking-from-work";
+            this.notifyStateChanged();
+            this.callbacks.moveTo(target, target, "normal", () => {
+              this.subState = "standing";
+              this.notifyStateChanged();
+              this.applyPendingStateIfReady();
+            });
+            return;
+          }
+        }
+
         this.subState = "standing";
         this.notifyStateChanged();
         this.applyPendingStateIfReady();
@@ -320,8 +343,37 @@ export class CharacterStateMachine {
   private pickNextSubState(): void {
     if (this.mainState !== "idle") return;
 
+    // Capture before releasing so we know whether a sofa exit is needed.
+    const wasOnSofa = this.subState === "sitting-on-sofa";
+
     this.releaseCurrentPoint();
 
+    // When coming from the sofa, always play the furniture-exit tween first so
+    // the character visibly stands up before any subsequent movement begins.
+    // This prevents every possible next sub-state (standing, wandering, …) from
+    // starting while the character is still in the seated pose.
+    if (wasOnSofa) {
+      this.subState = "leaving-work"; // non-stable guard: queues any pending state
+      this.notifyStateChanged();
+      this.callbacks.exitFurnitureIfNeeded("fastest", () => {
+        this.doPickNextSubState(true);
+      });
+      return;
+    }
+
+    this.doPickNextSubState();
+  }
+
+  /**
+   * Selects and enters the next idle sub-state. Must only be called once any
+   * furniture-exit animation has already completed (i.e. after
+   * exitFurnitureIfNeeded resolves when coming from a sofa/bed).
+   *
+   * @param sofaExit - true when the character just stood up from the sofa.
+   *   When "standing" is chosen, a short walk-away is inserted first so the
+   *   character never freezes directly in front of the sofa.
+   */
+  private doPickNextSubState(sofaExit = false): void {
     // Choose from possible sub-states based on current room
     const inPrivateRoom = this.currentRoomId === this.config.privateRoomId;
     const canSleep = inPrivateRoom;
@@ -337,6 +389,24 @@ export class CharacterStateMachine {
 
     switch (chosen) {
       case "standing":
+        if (sofaExit) {
+          // Walk to a random spot before stopping so the character visibly
+          // moves away from the sofa before settling into the standing pose.
+          const target = this.callbacks.randomStandingSpotInRoom(
+            this.currentRoomId,
+          );
+          if (target) {
+            this.subState = "walking-from-work";
+            this.notifyStateChanged();
+            this.callbacks.moveTo(target, target, "normal", () => {
+              this.subState = "standing";
+              this.holdTimer = this.randomHoldMs();
+              this.notifyStateChanged();
+              this.applyPendingStateIfReady();
+            });
+            return;
+          }
+        }
         this.subState = "standing";
         this.holdTimer = this.randomHoldMs();
         this.callbacks.stopMovement();
