@@ -311,8 +311,8 @@ class GatewayEventMonitor {
               id: "connect",
               method: "connect",
               params: {
-                minProtocol: 3,
-                maxProtocol: 3,
+                minProtocol: 4,
+                maxProtocol: 4,
                 client: {
                   id: "openclaw-control-ui",
                   version: "openclaw-character-dashboard-monitor",
@@ -648,8 +648,8 @@ async function fetchGatewaySnapshot(
             id: "connect",
             method: "connect",
             params: {
-              minProtocol: 3,
-              maxProtocol: 3,
+              minProtocol: 4,
+              maxProtocol: 4,
               client: {
                 id: "openclaw-control-ui",
                 version: "openclaw-character-dashboard-dev-server",
