@@ -58,7 +58,10 @@ type CharacterStoreState = {
   pendingForce: PendingForce | null;
 
   setCharacterState: (state: CharacterState) => void;
-  setCharacterMessage: (characterId: string, message: CharacterMessage | null) => void;
+  setCharacterMessage: (
+    characterId: string,
+    message: CharacterMessage | null,
+  ) => void;
   claimPoint: (pointKey: string, characterId: string) => boolean;
   releasePoint: (pointKey: string, characterId: string) => void;
   getOccupiedPointKey: (characterId: string) => string | null;

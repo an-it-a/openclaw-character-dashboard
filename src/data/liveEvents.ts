@@ -62,21 +62,25 @@ export class LiveEventSource {
       if (!agentId) return;
 
       const worldConfig = useWorldStore.getState().worldConfig;
-      const character = worldConfig?.characters.find(c => c.agentId === agentId);
+      const character = worldConfig?.characters.find(
+        (c) => c.agentId === agentId,
+      );
       if (!character) return;
 
       const characterId = character.id;
-      
+
       // Update store
-      const currentMessage = useCharacterStore.getState().characterMessages[characterId];
-      const newText = data.type === "agent-stream" 
-        ? (currentMessage?.text || "") + data.chunk
-        : content;
+      const currentMessage =
+        useCharacterStore.getState().characterMessages[characterId];
+      const newText =
+        data.type === "agent-stream"
+          ? (currentMessage?.text || "") + data.chunk
+          : content;
 
       useCharacterStore.getState().setCharacterMessage(characterId, {
         text: newText,
         role: role || currentMessage?.role || "assistant",
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Reset timer
@@ -91,13 +95,15 @@ export class LiveEventSource {
 
       this.messageTimers.set(characterId, timer);
     } else if (data.type === "agent-lifecycle") {
-        if (data.phase === "end" || data.phase === "error") {
-             const worldConfig = useWorldStore.getState().worldConfig;
-             const character = worldConfig?.characters.find(c => c.agentId === data.agentId);
-             if (character) {
-                 useCharacterStore.getState().setCharacterMessage(character.id, null);
-             }
+      if (data.phase === "end" || data.phase === "error") {
+        const worldConfig = useWorldStore.getState().worldConfig;
+        const character = worldConfig?.characters.find(
+          (c) => c.agentId === data.agentId,
+        );
+        if (character) {
+          useCharacterStore.getState().setCharacterMessage(character.id, null);
         }
+      }
     }
   }
 }

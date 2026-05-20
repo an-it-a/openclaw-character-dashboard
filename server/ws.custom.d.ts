@@ -29,12 +29,15 @@ declare module "ws" {
 
   export class WebSocketServer {
     constructor(options?: { noServer?: boolean; port?: number });
-    on(event: "connection", listener: (ws: WebSocket, request: IncomingMessage) => void): this;
+    on(
+      event: "connection",
+      listener: (ws: WebSocket, request: IncomingMessage) => void,
+    ): this;
     handleUpgrade(
       request: IncomingMessage,
       socket: Duplex,
       head: Buffer,
-      callback: (ws: WebSocket) => void
+      callback: (ws: WebSocket) => void,
     ): void;
     emit(event: string, ...args: any[]): void;
   }

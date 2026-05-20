@@ -98,7 +98,7 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
       fontFamily: "monospace",
       color: "#ffffff",
       align: "left",
-      wordWrap: { width: bubbleWidth - padding * 2 }
+      wordWrap: { width: bubbleWidth - padding * 2 },
     });
     this.speechText.setOrigin(0.5, 1);
 
@@ -109,21 +109,21 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
 
   showSpeech(text: string): void {
     if (!this.speechText || !this.speechBubble || !this.speechBg) return;
-    
+
     this.speechText.setText(text);
     this.speechBubble.setVisible(true);
-    
+
     // Redraw background
     const bounds = this.speechText.getBounds();
     const w = bounds.width + 20;
     const h = bounds.height + 15;
-    
+
     this.speechBg.clear();
     this.speechBg.fillStyle(0x000000, 0.85);
     this.speechBg.lineStyle(2, 0xffffff, 1);
     this.speechBg.fillRoundedRect(-w / 2, -h, w, h, 8);
     this.speechBg.strokeRoundedRect(-w / 2, -h, w, h, 8);
-    
+
     // Add a little triangle at the bottom
     this.speechBg.beginPath();
     this.speechBg.moveTo(-8, 0);
@@ -136,7 +136,7 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
     if (this.speechBubble.list[0] !== this.speechBg) {
       this.speechBubble.addAt(this.speechBg, 0);
     }
-    
+
     this.updateSpeechPosition();
   }
 
@@ -155,8 +155,10 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
     const bubbleBounds = this.speechBubble.getBounds();
     const sceneWidth = this.scene.scale.width;
 
-    if (targetX - bubbleBounds.width / 2 < 10) targetX = bubbleBounds.width / 2 + 10;
-    if (targetX + bubbleBounds.width / 2 > sceneWidth - 10) targetX = sceneWidth - bubbleBounds.width / 2 - 10;
+    if (targetX - bubbleBounds.width / 2 < 10)
+      targetX = bubbleBounds.width / 2 + 10;
+    if (targetX + bubbleBounds.width / 2 > sceneWidth - 10)
+      targetX = sceneWidth - bubbleBounds.width / 2 - 10;
     if (targetY - bubbleBounds.height < 10) targetY = bubbleBounds.height + 10;
 
     this.speechBubble.setPosition(targetX, targetY);
@@ -170,7 +172,6 @@ export class CharacterSprite extends Phaser.GameObjects.Sprite {
   }
 
   // ... (rest of the class)
-
 
   /** Play a named animation clip. "walk-right" is walk-left with flipX. */
   playClip(clip: AnimationClip): void {

@@ -42,7 +42,12 @@ export class PathFinder {
     const closedSet = new Set<string>();
     const nodeMap = new Map<string, Node>();
 
-    const startNode: Node = { pos: from, g: 0, f: heuristic(from, to), parent: null };
+    const startNode: Node = {
+      pos: from,
+      g: 0,
+      f: heuristic(from, to),
+      parent: null,
+    };
     openSet.push(startNode);
     nodeMap.set(key(from), startNode);
 
@@ -65,7 +70,12 @@ export class PathFinder {
         const existing = nodeMap.get(nk);
         if (existing && existing.g <= g) continue;
 
-        const node: Node = { pos: neighbor, g, f: g + heuristic(neighbor, to), parent: current };
+        const node: Node = {
+          pos: neighbor,
+          g,
+          f: g + heuristic(neighbor, to),
+          parent: current,
+        };
         nodeMap.set(nk, node);
         openSet.push(node);
       }
@@ -172,8 +182,10 @@ class MinHeap<T> {
       let smallest = i;
       const l = 2 * i + 1;
       const r = 2 * i + 2;
-      if (l < n && this.compare(this.data[l], this.data[smallest]) < 0) smallest = l;
-      if (r < n && this.compare(this.data[r], this.data[smallest]) < 0) smallest = r;
+      if (l < n && this.compare(this.data[l], this.data[smallest]) < 0)
+        smallest = l;
+      if (r < n && this.compare(this.data[r], this.data[smallest]) < 0)
+        smallest = r;
       if (smallest === i) break;
       [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]];
       i = smallest;

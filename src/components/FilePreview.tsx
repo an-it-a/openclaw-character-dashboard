@@ -327,7 +327,10 @@ function JsonPreview({ url }: { url: string }): JSX.Element {
           >
             Preview
           </button>
-          <button className="file-preview-json__toggle" onClick={() => setRawMode(true)}>
+          <button
+            className="file-preview-json__toggle"
+            onClick={() => setRawMode(true)}
+          >
             Raw
           </button>
           <button
@@ -368,7 +371,10 @@ function JsonPreview({ url }: { url: string }): JSX.Element {
         >
           Preview
         </button>
-        <button className="file-preview-json__toggle" onClick={() => setRawMode(true)}>
+        <button
+          className="file-preview-json__toggle"
+          onClick={() => setRawMode(true)}
+        >
           Raw
         </button>
         <button className="file-preview-json__toggle" onClick={setAllExpanded}>
@@ -438,7 +444,10 @@ function JsonNode({
 
   if (Array.isArray(value)) {
     return (
-      <div className="file-preview-json__node" style={{ marginLeft: depth * 18 }}>
+      <div
+        className="file-preview-json__node"
+        style={{ marginLeft: depth * 18 }}
+      >
         <div className="file-preview-json__line">
           <button
             className="file-preview-json__caret"
@@ -450,7 +459,9 @@ function JsonNode({
           {label !== undefined && (
             <span className="file-preview-json__key">"{label}"</span>
           )}
-          {label !== undefined && <span className="file-preview-json__punct">: </span>}
+          {label !== undefined && (
+            <span className="file-preview-json__punct">: </span>
+          )}
           {collapsed ? (
             <span className="file-preview-json__summary">
               [{value.length} item{value.length === 1 ? "" : "s"}]
@@ -488,7 +499,10 @@ function JsonNode({
   if (isJsonObject(value)) {
     const entries = Object.entries(value);
     return (
-      <div className="file-preview-json__node" style={{ marginLeft: depth * 18 }}>
+      <div
+        className="file-preview-json__node"
+        style={{ marginLeft: depth * 18 }}
+      >
         <div className="file-preview-json__line">
           <button
             className="file-preview-json__caret"
@@ -500,7 +514,9 @@ function JsonNode({
           {label !== undefined && (
             <span className="file-preview-json__key">"{label}"</span>
           )}
-          {label !== undefined && <span className="file-preview-json__punct">: </span>}
+          {label !== undefined && (
+            <span className="file-preview-json__punct">: </span>
+          )}
           {collapsed ? (
             <span className="file-preview-json__summary">
               {`{${entries.length} key${entries.length === 1 ? "" : "s"}}`}
@@ -541,13 +557,19 @@ function JsonNode({
       {label !== undefined && (
         <span className="file-preview-json__key">"{label}"</span>
       )}
-      {label !== undefined && <span className="file-preview-json__punct">: </span>}
+      {label !== undefined && (
+        <span className="file-preview-json__punct">: </span>
+      )}
       <JsonPrimitive value={value} />
     </div>
   );
 }
 
-function JsonPrimitive({ value }: { value: null | boolean | number | string }): JSX.Element {
+function JsonPrimitive({
+  value,
+}: {
+  value: null | boolean | number | string;
+}): JSX.Element {
   if (value === null) {
     return <span className="file-preview-json__null">null</span>;
   }
