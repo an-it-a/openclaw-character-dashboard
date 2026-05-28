@@ -1,5 +1,5 @@
 {
-  "canvasWidth": 1112,
+  "canvasWidth": 1280,
   "canvasHeight": 760,
   "rooms": [
     {
@@ -7,7 +7,7 @@
       "label": "Office",
       "x": 0,
       "y": 0,
-      "width": 896,
+      "width": 1088,
       "height": 288,
       "objects": [
         {
@@ -15,7 +15,7 @@
           "type": "floor",
           "x": 0,
           "y": 64,
-          "width": 896,
+          "width": 1088,
           "height": 224,
           "blocksPath": false,
           "tiles": {
@@ -34,7 +34,7 @@
           "type": "wall",
           "x": 0,
           "y": 0,
-          "width": 896,
+          "width": 1088,
           "height": 64,
           "blocksPath": true,
           "tiles": {
@@ -182,6 +182,40 @@
           "type": "furniture",
           "asset": "images/map/objects/desk.png",
           "x": 672,
+          "y": 160,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-7",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 864,
+          "y": 64,
+          "width": 128,
+          "height": 64,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 40,
+              "y": -16,
+              "approachFrom": "top"
+            }
+          ]
+        },
+        {
+          "id": "desk-8",
+          "type": "furniture",
+          "asset": "images/map/objects/desk.png",
+          "x": 864,
           "y": 160,
           "width": 128,
           "height": 64,
@@ -344,7 +378,7 @@
       "label": "Corridor",
       "x": 320,
       "y": 480,
-      "width": 768,
+      "width": 960,
       "height": 64,
       "objects": [
         {
@@ -352,7 +386,7 @@
           "type": "floor",
           "x": 320,
           "y": 480,
-          "width": 768,
+          "width": 960,
           "height": 64,
           "blocksPath": false,
           "tiles": {
@@ -454,10 +488,30 @@
           "blocksPath": true
         },
         {
+          "id": "wall-top-ubel-left",
+          "type": "wall",
+          "asset": "",
+          "x": 1088,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
+          "id": "wall-top-ubel-right",
+          "type": "wall",
+          "asset": "",
+          "x": 1216,
+          "y": 480,
+          "width": 64,
+          "height": 32,
+          "blocksPath": true
+        },
+        {
           "id": "corridor-end-wall",
           "type": "wall",
           "asset": "",
-          "x": 1087,
+          "x": 1279,
           "y": 480,
           "width": 1,
           "height": 64,
@@ -950,7 +1004,7 @@
     {
       "id": "it114115-logo-room",
       "label": "HD in Cloud and Data Centre Administration",
-      "x": 896,
+      "x": 1088,
       "y": 0,
       "width": 192,
       "height": 288,
@@ -959,30 +1013,10 @@
           "id": "it114115-logo",
           "type": "object",
           "asset": "images/map/rooms/it114115_logo.png",
-          "x": 896,
+          "x": 1088,
           "y": 48,
           "width": 192,
           "height": 192,
-          "blocksPath": true
-        },
-        {
-          "id": "side-wall-top-5",
-          "type": "wall",
-          "asset": "",
-          "x": 896,
-          "y": 0,
-          "width": 1,
-          "height": 288,
-          "blocksPath": true
-        },
-        {
-          "id": "side-wall-top-6",
-          "type": "wall",
-          "asset": "",
-          "x": 1087,
-          "y": 0,
-          "width": 1,
-          "height": 288,
           "blocksPath": true
         }
       ]
@@ -1018,11 +1052,11 @@
         {
           "id": "private-aura-door",
           "type": "door",
-          "asset": "images/map/rooms/room-door.png",
+          "asset": "",
           "x": 960,
-          "y": 416,
+          "y": 480,
           "width": 64,
-          "height": 65,
+          "height": 10,
           "blocksPath": false
         },
         {
@@ -1078,7 +1112,7 @@
     {
       "id": "hkiit-logo-room",
       "label": "HKIIT",
-      "x": 896,
+      "x": 1088,
       "y": 544,
       "width": 192,
       "height": 192,
@@ -1087,14 +1121,170 @@
           "id": "hkiit-logo",
           "type": "object",
           "asset": "images/map/rooms/hkiit_logo.png",
-          "x": 896,
+          "x": 1088,
           "y": 544,
           "width": 192,
           "height": 192,
           "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-ubel",
+      "label": "Übel's Room",
+      "x": 1088,
+      "y": 288,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-ubel-floor",
+          "type": "floor",
+          "asset": "images/map/characters/ubel/room/floor.png",
+          "x": 1088,
+          "y": 352,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
         },
         {
-          "id": "side-wall-bot-3",
+          "id": "private-ubel-wall",
+          "type": "wall",
+          "asset": "images/map/characters/ubel/room/wall.png",
+          "x": 1088,
+          "y": 288,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-ubel-door",
+          "type": "door",
+          "asset": "",
+          "x": 1152,
+          "y": 480,
+          "width": 64,
+          "height": 10,
+          "blocksPath": false
+        },
+        {
+          "id": "bed-ubel",
+          "type": "furniture",
+          "asset": "images/map/characters/ubel/object/bed.png",
+          "x": 1216,
+          "y": 384,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "private-ubel-decor-1",
+          "type": "object",
+          "asset": "images/map/characters/ubel/object/decor1.png",
+          "x": 1216,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-top-7",
+          "type": "wall",
+          "asset": "",
+          "x": 1088,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-top-8",
+          "type": "wall",
+          "asset": "",
+          "x": 1279,
+          "y": 288,
+          "width": 1,
+          "height": 192,
+          "blocksPath": true
+        }
+      ]
+    },
+    {
+      "id": "private-land",
+      "label": "Land's Room",
+      "x": 896,
+      "y": 544,
+      "width": 192,
+      "height": 192,
+      "objects": [
+        {
+          "id": "private-land-floor",
+          "type": "floor",
+          "asset": "images/map/characters/land/room/floor.png",
+          "x": 896,
+          "y": 608,
+          "width": 192,
+          "height": 128,
+          "blocksPath": false
+        },
+        {
+          "id": "private-land-wall",
+          "type": "wall",
+          "asset": "images/map/characters/land/room/wall.png",
+          "x": 896,
+          "y": 544,
+          "width": 192,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "private-land-door",
+          "type": "door",
+          "asset": "images/map/rooms/room-door.png",
+          "x": 960,
+          "y": 544,
+          "width": 64,
+          "height": 64,
+          "blocksPath": false
+        },
+        {
+          "id": "bed-land",
+          "type": "furniture",
+          "asset": "images/map/characters/land/object/bed.png",
+          "x": 1024,
+          "y": 640,
+          "width": 64,
+          "height": 96,
+          "blocksPath": true,
+          "interactionPoints": [
+            {
+              "x": 8,
+              "y": 40,
+              "approachFrom": "left"
+            }
+          ],
+          "depthAnchor": "top"
+        },
+        {
+          "id": "private-land-decor-1",
+          "type": "object",
+          "asset": "images/map/characters/land/object/decor1.png",
+          "x": 1024,
+          "y": 576,
+          "width": 64,
+          "height": 64,
+          "blocksPath": true
+        },
+        {
+          "id": "side-wall-bot-7",
           "type": "wall",
           "asset": "",
           "x": 896,
@@ -1104,7 +1294,7 @@
           "blocksPath": true
         },
         {
-          "id": "side-wall-bot-4",
+          "id": "side-wall-bot-8",
           "type": "wall",
           "asset": "",
           "x": 1087,
@@ -1197,6 +1387,30 @@
       "spriteSheet": {
         "inside": "images/map/characters/aura/inside.png",
         "outside": "images/map/characters/aura/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "ubel",
+      "agentId": "robot_7",
+      "name": "Übel",
+      "privateRoomId": "private-ubel",
+      "spriteSheet": {
+        "inside": "images/map/characters/ubel/inside.png",
+        "outside": "images/map/characters/ubel/outside.png",
+        "frameWidth": 64,
+        "frameHeight": 64
+      }
+    },
+    {
+      "id": "land",
+      "agentId": "robot_8",
+      "name": "Land",
+      "privateRoomId": "private-land",
+      "spriteSheet": {
+        "inside": "images/map/characters/land/inside.png",
+        "outside": "images/map/characters/land/outside.png",
         "frameWidth": 64,
         "frameHeight": 64
       }
