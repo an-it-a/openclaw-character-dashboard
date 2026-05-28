@@ -68,9 +68,7 @@ export function PhaserGame(): JSX.Element {
       style={{
         width: "100%",
         height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        overflow: "hidden",
         ...(overlayOpen ? { pointerEvents: "none" } : {}),
       }}
     />
