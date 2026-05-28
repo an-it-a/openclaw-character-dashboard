@@ -29,7 +29,7 @@ export function App(): JSX.Element {
   const worldConfig = useWorldStore((s) => s.worldConfig);
   const setWorldConfig = useWorldStore((s) => s.setWorldConfig);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [viewMode, setViewMode] = useState<ViewMode>("game-only");
 
   console.log("[App] VITE_BANNER_TEXT:", import.meta.env.VITE_BANNER_TEXT);
 
@@ -44,6 +44,12 @@ export function App(): JSX.Element {
         console.error("[App] Failed to load world.json:", message);
       });
   }, [worldConfig, setWorldConfig]);
+
+  useEffect(() => {
+    // Trigger a window resize event to force Phaser to recalculate its canvas size
+    // when the layout changes (e.g. sidebar hidden/shown).
+    window.dispatchEvent(new Event("resize"));
+  }, [viewMode]);
 
   if (loadError !== null) {
     return (
