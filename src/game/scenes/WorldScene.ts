@@ -6,6 +6,7 @@ import { CharacterStateMachine } from "@/game/objects/CharacterStateMachine";
 import type { StateMachineCallbacks } from "@/game/objects/CharacterStateMachine";
 import { CollisionGrid, GRID_CELL } from "@/game/pathfinding/CollisionGrid";
 import { PathFinder } from "@/game/pathfinding/PathFinder";
+import { hasStandingColumnConflict } from "@/game/utils/standingSpot";
 import { LiveDataSource } from "@/data/live";
 import { LiveEventSource } from "@/data/liveEvents";
 import { useWorldStore } from "@/store/worldStore";
@@ -401,33 +402,11 @@ export class WorldScene extends Phaser.Scene {
       },
 
       randomWalkableInRoom: (roomId) => {
-        const room = this.config.rooms.find((r) => r.id === roomId);
-        if (!room) return null;
+        return this.findWalkableRoomPoint(roomId);
+      },
 
-        // Try up to 20 random cells inside the room bounds
-        for (let attempt = 0; attempt < 20; attempt++) {
-          const px = room.x + Math.random() * room.width;
-          const py = room.y + Math.random() * room.height;
-          const { gx, gy } = this.collisionGrid.worldToGrid(px, py);
-          if (
-            this.collisionGrid.isWalkable(gx, gy) &&
-            !this.collisionGrid.isDoorCell(gx, gy)
-          ) {
-            const center = this.collisionGrid.gridCenterToWorld(gx, gy);
-            return { x: center.px, y: center.py };
-          }
-        }
-
-        // Fallback: use nearestWalkable from room centre
-        const cx = room.x + room.width / 2;
-        const cy = room.y + room.height / 2;
-        const nearest = this.collisionGrid.nearestWalkable(cx, cy);
-        if (!nearest) return null;
-        const center = this.collisionGrid.gridCenterToWorld(
-          nearest.gx,
-          nearest.gy,
-        );
-        return { x: center.px, y: center.py };
+      randomStandingSpotInRoom: (roomId) => {
+        return this.findStandingSpotInRoom(roomId, characterId);
       },
 
       claimInteractionPoint: (objectId, pointIndex) => {
@@ -539,6 +518,98 @@ export class WorldScene extends Phaser.Scene {
   private clearSofaLeaveTimer(record: CharacterRecord): void {
     record.sofaLeaveTimer?.remove(false);
     record.sofaLeaveTimer = null;
+  }
+
+  private findWalkableRoomPoint(roomId: string): { x: number; y: number } | null {
+    const room = this.config.rooms.find((r) => r.id === roomId);
+    if (!room) return null;
+
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const px = room.x + Math.random() * room.width;
+      const py = room.y + Math.random() * room.height;
+      const { gx, gy } = this.collisionGrid.worldToGrid(px, py);
+      if (
+        this.collisionGrid.isWalkable(gx, gy) &&
+        !this.collisionGrid.isDoorCell(gx, gy)
+      ) {
+        const center = this.collisionGrid.gridCenterToWorld(gx, gy);
+        return { x: center.px, y: center.py };
+      }
+    }
+
+    const cx = room.x + room.width / 2;
+    const cy = room.y + room.height / 2;
+    const nearest = this.collisionGrid.nearestWalkable(cx, cy);
+    if (!nearest) return null;
+    const center = this.collisionGrid.gridCenterToWorld(nearest.gx, nearest.gy);
+    return { x: center.px, y: center.py };
+  }
+
+  private findStandingSpotInRoom(
+    roomId: string,
+    characterId: string,
+  ): { x: number; y: number } | null {
+    const room = this.config.rooms.find((r) => r.id === roomId);
+    if (!room) {
+      return null;
+    }
+
+    const standingOccupants = Array.from(this.characters.entries()).flatMap(
+      ([otherCharacterId, record]) => {
+        if (otherCharacterId === characterId || record.subState !== "standing") {
+          return [];
+        }
+
+        const { gx, gy } = this.collisionGrid.worldToGrid(
+          record.sprite.x,
+          record.sprite.y,
+        );
+        return [{ characterId: otherCharacterId, gx, gy }];
+      },
+    );
+
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const px = room.x + Math.random() * room.width;
+      const py = room.y + Math.random() * room.height;
+      const candidate = this.collisionGrid.worldToGrid(px, py);
+      if (!this.isStandingCandidate(candidate.gx, candidate.gy, standingOccupants, characterId)) {
+        continue;
+      }
+
+      const center = this.collisionGrid.gridCenterToWorld(candidate.gx, candidate.gy);
+      return { x: center.px, y: center.py };
+    }
+
+    const startGx = Math.floor(room.x / GRID_CELL);
+    const endGx = Math.ceil((room.x + room.width) / GRID_CELL);
+    const startGy = Math.floor(room.y / GRID_CELL);
+    const endGy = Math.ceil((room.y + room.height) / GRID_CELL);
+
+    for (let gy = startGy; gy < endGy; gy++) {
+      for (let gx = startGx; gx < endGx; gx++) {
+        if (!this.isStandingCandidate(gx, gy, standingOccupants, characterId)) {
+          continue;
+        }
+
+        const center = this.collisionGrid.gridCenterToWorld(gx, gy);
+        return { x: center.px, y: center.py };
+      }
+    }
+
+    return this.findWalkableRoomPoint(roomId);
+  }
+
+  private isStandingCandidate(
+    gx: number,
+    gy: number,
+    standingOccupants: { characterId: string; gx: number; gy: number }[],
+    characterId: string,
+  ): boolean {
+    return (
+      this.collisionGrid.isWalkable(gx, gy) &&
+      !this.collisionGrid.isDoorCell(gx, gy) &&
+      !hasStandingColumnConflict({ gx, gy }, standingOccupants, characterId)
+    );
   }
 
   private clearSofaTimers(): void {
