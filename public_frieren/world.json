@@ -1393,7 +1393,7 @@
     },
     {
       "id": "ubel",
-      "agentId": "robot_7",
+      "agentId": "domain-commentator",
       "name": "Übel",
       "privateRoomId": "private-ubel",
       "spriteSheet": {
@@ -1405,7 +1405,7 @@
     },
     {
       "id": "land",
-      "agentId": "robot_8",
+      "agentId": "communication_manager",
       "name": "Land",
       "privateRoomId": "private-land",
       "spriteSheet": {
