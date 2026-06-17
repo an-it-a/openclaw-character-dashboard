@@ -68,7 +68,8 @@ export class MockDataSource implements DataSource {
   // ---------------------------------------------------------------------------
 
   private scheduleNext(agentId: string): void {
-    const delayMs = MIN_INTERVAL_MS + Math.random() * (MAX_INTERVAL_MS - MIN_INTERVAL_MS);
+    const delayMs =
+      MIN_INTERVAL_MS + Math.random() * (MAX_INTERVAL_MS - MIN_INTERVAL_MS);
     const timer = setTimeout(() => {
       this.flip(agentId);
       this.scheduleNext(agentId);

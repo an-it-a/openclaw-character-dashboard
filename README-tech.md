@@ -55,6 +55,36 @@ Then start the dashboard:
 run.bat
 ```
 
+### Docker
+
+You can run the dashboard using Docker. We provide a helper script to ensure a fresh build and clean execution.
+
+1. Run the helper script:
+
+```bash
+./docker-run.sh
+```
+
+This script will:
+- Run `npm run build` to generate a fresh `dist` folder.
+- Clean up any old containers.
+- Start the dashboard in the **foreground** so you can see the logs.
+- Automatically serve the updated dashboard on port **3001**.
+
+2. To stop the dashboard, press `Ctrl+C` in the terminal.
+
+3. By default, it looks for OpenClaw data in `~/.openclaw`. Customise via `.env`:
+
+```bash
+# Edit .env to set your paths
+OPENCLAW_DATA_PATH=/path/to/.openclaw
+SHARED_DATA_PATH=/path/to/shared
+```
+
+4. Open your browser at:
+   - **Production UI:** `http://localhost:3001` (Recommended)
+   - **Development UI:** `http://localhost:5173` (Live reload)
+
 ---
 
 ## Manual Quick Start
@@ -129,6 +159,7 @@ These settings control the project runtime:
 | `VITE_PUBLIC_DIR`                  | Asset pack/public root that contains `world.json` and all map assets.                                  |
 | `SHARED_ROOT`                      | Resource wall browsing root. Defaults to `<OPENCLAW_HOME>/shared`.                                     |
 | `VITE_SESSION_ACTIVE_THRESHOLD_MS` | How long recent user-facing activity keeps an agent in `working`.                                      |
+| `VITE_BANNER_TEXT`                 | Text displayed in the top banner of the dashboard.                                                     |
 
 ## Map Your Agents To Characters
 
@@ -192,8 +223,9 @@ Expected asset layout:
 
 Important details:
 
-- sprite sheets use `48x64` frames
+- sprite sheets use `48x64` or `64x64` frames
 - `world.json` is the source of truth for map layout and character config
+- changing `canvasWidth` or `canvasHeight` in `world.json` will automatically resize the dashboard UI
 - no source code change is required to swap character art or room art if your asset paths and `world.json` are correct
 
 ## Live State Behavior

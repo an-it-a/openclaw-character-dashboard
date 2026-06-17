@@ -47,6 +47,10 @@ export function PhaserGame(): JSX.Element {
       height: canvasHeight,
       backgroundColor: "#1a1a2e",
       scene: [BootScene, PreloadScene, WorldScene],
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
       banner: false,
       parent: containerRef.current,
     });
@@ -55,19 +59,16 @@ export function PhaserGame(): JSX.Element {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-    // Intentionally no deps: Phaser game is created exactly once on mount.
-    // canvasWidth/canvasHeight are stable at this point because App.tsx
-    // ensures worldConfig is loaded before rendering PhaserGame.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [canvasWidth, canvasHeight]);
 
   return (
     <div
       ref={containerRef}
       className="phaser-container"
       style={{
-        width: canvasWidth,
-        height: canvasHeight,
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
         ...(overlayOpen ? { pointerEvents: "none" } : {}),
       }}
     />

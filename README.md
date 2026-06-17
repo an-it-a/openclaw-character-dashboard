@@ -101,6 +101,12 @@ install.bat
 ./run.sh
 ```
 
+**使用 Docker：**
+
+```bash
+./docker-run.sh
+```
+
 ### Windows — PowerShell
 
 ```powershell
@@ -115,9 +121,8 @@ run.bat
 
 啟動後，開啟瀏覽器，前往：
 
-```
-http://localhost:5173
-```
+- **正式環境 (推薦)：** `http://localhost:3001`
+- **開發偵錯 (Live Reload)：** `http://localhost:5173`
 
 看板頁面會載入，你的智能體角色會出現在地圖上。
 
@@ -147,6 +152,7 @@ OPENCLAW_HOME=/你的/.openclaw路徑
 | `VITE_API_PORT`                    | 本地 API 伺服器使用的連接埠號                      | `3001`                   |
 | `SHARED_ROOT`                      | 資源牆檔案瀏覽根目錄                               | `<OPENCLAW_HOME>/shared` |
 | `VITE_SESSION_ACTIVE_THRESHOLD_MS` | 智能體被判定為「工作中」的最近活動時間閾值（毫秒） | `10000`                  |
+| `VITE_BANNER_TEXT`                 | 看板頂部橫幅顯示的文字                             | `OpenClaw Dashboard`     |
 
 一般情況下只需修改 `OPENCLAW_HOME`，其餘項保持預設即可。
 

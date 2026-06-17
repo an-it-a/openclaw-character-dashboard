@@ -1,0 +1,24 @@
+services:
+  dashboard:
+    build:
+      context: .
+      target: base
+    command: npm run dev:all
+    # In host mode, ports are not mapped; the app uses the host's network directly.
+    # The dashboard will be available on whatever port API_PORT is set to.
+    network_mode: "host"
+    environment:
+      # These paths are internal to the container and must match 'volumes' below.
+      - OPENCLAW_HOME=/data/.openclaw
+      - SHARED_ROOT=/data/shared
+      # Use 127.0.0.1 because we are in host network mode
+      - GATEWAY_HOST=127.0.0.1
+      - VITE_BANNER_TEXT=${VITE_BANNER_TEXT}
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ${OPENCLAW_DATA_PATH:-~/.openclaw}:/data/.openclaw
+      - ${SHARED_DATA_PATH:-~/.openclaw/shared}:/data/shared
+    restart: unless-stopped

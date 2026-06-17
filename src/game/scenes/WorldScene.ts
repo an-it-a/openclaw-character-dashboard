@@ -8,6 +8,7 @@ import { CollisionGrid, GRID_CELL } from "@/game/pathfinding/CollisionGrid";
 import { PathFinder } from "@/game/pathfinding/PathFinder";
 import { hasStandingColumnConflict } from "@/game/utils/standingSpot";
 import { LiveDataSource } from "@/data/live";
+import { LiveEventSource } from "@/data/liveEvents";
 import { useWorldStore } from "@/store/worldStore";
 import type { LiveDataStatus } from "@/store/worldStore";
 import { useCharacterStore } from "@/store/characterStore";
@@ -54,6 +55,7 @@ export class WorldScene extends Phaser.Scene {
   private characters: Map<string, CharacterRecord> = new Map();
   private characterIdByAgentId: Map<string, string> = new Map();
   private dataSource: DataSource | null = null;
+  private eventSource: LiveEventSource | null = null;
 
   /** Flat index: objectId → WorldObject (built once on create) */
   private objectIndex: Map<string, WorldObject> = new Map();
@@ -86,6 +88,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.clearSofaTimers();
+      this.eventSource?.stop();
     });
 
     // --- Static map ---
@@ -195,6 +198,11 @@ export class WorldScene extends Phaser.Scene {
     const isMockMode = useWorldStore.getState().isMockMode;
     this.startDataSource(isMockMode);
 
+    if (!isMockMode) {
+      this.eventSource = new LiveEventSource();
+      this.eventSource.start();
+    }
+
     // Re-start data source if mock mode is toggled while the scene is active
     useWorldStore.subscribe((state, prev) => {
       if (state.isMockMode !== prev.isMockMode) {
@@ -210,6 +218,19 @@ export class WorldScene extends Phaser.Scene {
           .get(characterId)
           ?.machine.forceState(mainState, subState);
         useCharacterStore.getState().clearPendingForce();
+      }
+    });
+
+    // Subscribe to character messages to show/hide speech bubbles
+    useCharacterStore.subscribe((state) => {
+      const messages = state.characterMessages;
+      for (const [charId, record] of this.characters.entries()) {
+        const msg = messages[charId];
+        if (msg) {
+          record.sprite.showSpeech(msg.text);
+        } else {
+          record.sprite.hideSpeech();
+        }
       }
     });
   }
@@ -497,7 +518,9 @@ export class WorldScene extends Phaser.Scene {
     record.sofaLeaveTimer = null;
   }
 
-  private findWalkableRoomPoint(roomId: string): { x: number; y: number } | null {
+  private findWalkableRoomPoint(
+    roomId: string,
+  ): { x: number; y: number } | null {
     const room = this.config.rooms.find((r) => r.id === roomId);
     if (!room) return null;
 
@@ -533,7 +556,10 @@ export class WorldScene extends Phaser.Scene {
 
     const standingOccupants = Array.from(this.characters.entries()).flatMap(
       ([otherCharacterId, record]) => {
-        if (otherCharacterId === characterId || record.subState !== "standing") {
+        if (
+          otherCharacterId === characterId ||
+          record.subState !== "standing"
+        ) {
           return [];
         }
 
@@ -549,11 +575,21 @@ export class WorldScene extends Phaser.Scene {
       const px = room.x + Math.random() * room.width;
       const py = room.y + Math.random() * room.height;
       const candidate = this.collisionGrid.worldToGrid(px, py);
-      if (!this.isStandingCandidate(candidate.gx, candidate.gy, standingOccupants, characterId)) {
+      if (
+        !this.isStandingCandidate(
+          candidate.gx,
+          candidate.gy,
+          standingOccupants,
+          characterId,
+        )
+      ) {
         continue;
       }
 
-      const center = this.collisionGrid.gridCenterToWorld(candidate.gx, candidate.gy);
+      const center = this.collisionGrid.gridCenterToWorld(
+        candidate.gx,
+        candidate.gy,
+      );
       return { x: center.px, y: center.py };
     }
 

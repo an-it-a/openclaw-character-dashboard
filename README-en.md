@@ -101,6 +101,12 @@ After the installer finishes, it creates a `run` script for you.
 ./run.sh
 ```
 
+**Using Docker:**
+
+```bash
+./docker-run.sh
+```
+
 ### Windows — PowerShell
 
 ```powershell
@@ -115,9 +121,8 @@ run.bat
 
 Then open your browser and go to:
 
-```
-http://localhost:5173
-```
+- **Production UI (Recommended):** `http://localhost:3001`
+- **Development UI (Live Reload):** `http://localhost:5173`
 
 The dashboard will load and your agents will appear as animated characters on the map.
 
@@ -147,6 +152,7 @@ Replace `/path/to/your/.openclaw` with the actual path to your OpenClaw folder. 
 | `VITE_API_PORT`                    | Port used by the local API server                                | `3001`                   |
 | `SHARED_ROOT`                      | Folder shown in the resource wall                                | `<OPENCLAW_HOME>/shared` |
 | `VITE_SESSION_ACTIVE_THRESHOLD_MS` | How many milliseconds of recent activity make an agent "working" | `10000`                  |
+| `VITE_BANNER_TEXT`                 | Text displayed in the top banner of the dashboard                | `OpenClaw Dashboard`     |
 
 You only need to change `OPENCLAW_HOME`. The rest have sensible defaults.
 
